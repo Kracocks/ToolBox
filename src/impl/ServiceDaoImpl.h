@@ -24,6 +24,7 @@ namespace impl {
     	void addLogin(const int &service_id, const model::Identifiant<> &item);
         void insert(const model::Service &item) override;
         void remove(const model::Service &item) override;
+    	[[nodiscard]] int getLastId() const;
     };
 
 } // impl

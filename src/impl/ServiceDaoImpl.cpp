@@ -5,6 +5,7 @@
 #include "ServiceDaoImpl.h"
 
 #include <iostream>
+#include <memory>
 
 namespace impl {
     ServiceDaoImpl::ServiceDaoImpl(): m_connector(bd::Connector::getInstance()) {}
@@ -12,41 +13,42 @@ namespace impl {
     std::vector<model::Service> ServiceDaoImpl::findAll() {
         std::vector<model::Service> services {};
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "SELECT service_id, name, login_id, email, password "
-								"FROM SERVICE natural join USE natural join LOGIN;";
+    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
+								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN;";
         sqlite3_stmt *stmt;
 
         int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
         if (status != SQLITE_OK) {
-            std::cerr << "Error preparing statement to get all SERVICE" << std::endl;
+            std::cerr << "Error preparing statement to get all SERVICE\n" << sqlite3_errmsg(bd) << std::endl;
             return services;
         }
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-        	model::Identifiant<> login {
-        		sqlite3_column_int(stmt, 2),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
-				false
-			};
-
+        	model::Service service;
+        	service.id = -1;
         	const int service_id {sqlite3_column_int(stmt, 0)};
-
-        	bool exist {false};
         	for (model::Service &serv : services) {
         		if (serv.id == service_id) {
-        			serv.identifiants.push_back(login);
-        			exist = true;
+        			service = serv;
         		}
         	}
-
-        	if (!exist) {
-        		model::Service service {
+        	if (service.id == -1) {
+        		service = model::Service {
         			service_id,
 					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
 				};
-        		service.identifiants.push_back(login);
         		services.push_back(service);
+        	}
+			const unsigned char *email = sqlite3_column_text(stmt, 3);
+        	const unsigned char *password = sqlite3_column_text(stmt, 4);
+			if ((email || password)) {
+        		model::Identifiant<> login {
+        			sqlite3_column_int(stmt, 2),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
+					false
+				};
+				service.identifiants.push_back(login);
         	}
         }
 
@@ -57,8 +59,8 @@ namespace impl {
 	std::vector<model::Service> ServiceDaoImpl::findByName(std::string &&name) {
     	std::vector<model::Service> services;
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT service_id, name, login_id, email, password "
-								"FROM SERVICE natural join USE natural join LOGIN "
+    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
+								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN "
 								"where name LIKE ?;";
     	sqlite3_stmt *stmt;
 
@@ -68,33 +70,34 @@ namespace impl {
     		if (stmt) sqlite3_finalize(stmt);
     		return services;
     	}
-    	sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_text(stmt, 1, (name + '%').c_str(), -1, SQLITE_TRANSIENT);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-    		model::Identifiant<> login {
-    			sqlite3_column_int(stmt, 2),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
-				false
-			};
-
+    		model::Service service;
+    		service.id = -1;
     		const int service_id {sqlite3_column_int(stmt, 0)};
-
-    		bool exist {false};
     		for (model::Service &serv : services) {
     			if (serv.id == service_id) {
-    				serv.identifiants.push_back(login);
-    				exist = true;
+    				service = serv;
     			}
     		}
-
-    		if (!exist) {
-    			model::Service service {
+    		if (service.id == -1) {
+    			service = model::Service {
     				service_id,
 					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
 				};
-    			service.identifiants.push_back(login);
     			services.push_back(service);
+    		}
+    		const unsigned char *email = sqlite3_column_text(stmt, 3);
+    		const unsigned char *password = sqlite3_column_text(stmt, 4);
+    		if ((email || password)) {
+    			model::Identifiant<> login {
+    				sqlite3_column_int(stmt, 2),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
+					false
+				};
+    			service.identifiants.push_back(login);
     		}
     	}
 
@@ -105,8 +108,8 @@ namespace impl {
 	std::vector<model::Service> ServiceDaoImpl::findByName(const std::string &name) {
     	std::vector<model::Service> services;
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT service_id, name, login_id, email, password "
-								"FROM SERVICE natural join USE natural join LOGIN "
+    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
+								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN "
 								"where name LIKE ?;";
     	sqlite3_stmt *stmt;
 
@@ -116,33 +119,34 @@ namespace impl {
     		if (stmt) sqlite3_finalize(stmt);
     		return services;
     	}
-    	sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_text(stmt, 1, (name + '%').c_str(), -1, SQLITE_TRANSIENT);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-    		model::Identifiant<> login {
-    			sqlite3_column_int(stmt, 2),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
-				false
-			};
-
+    		model::Service service;
+    		service.id = -1;
     		const int service_id {sqlite3_column_int(stmt, 0)};
-
-    		bool exist {false};
     		for (model::Service &serv : services) {
     			if (serv.id == service_id) {
-    				serv.identifiants.push_back(login);
-    				exist = true;
+    				service = serv;
     			}
     		}
-
-    		if (!exist) {
-    			model::Service service {
+    		if (service.id == -1) {
+    			service = model::Service {
     				service_id,
 					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
 				};
-    			service.identifiants.push_back(login);
     			services.push_back(service);
+    		}
+    		const unsigned char *email = sqlite3_column_text(stmt, 3);
+    		const unsigned char *password = sqlite3_column_text(stmt, 4);
+    		if ((email || password)) {
+    			model::Identifiant<> login {
+    				sqlite3_column_int(stmt, 2),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
+					false
+				};
+    			service.identifiants.push_back(login);
     		}
     	}
 
@@ -176,7 +180,7 @@ namespace impl {
 
     void ServiceDaoImpl::insert(const model::Service &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "INSERT INTO SERVICE(name) values (?);";
+        const std::string sql = "INSERT INTO SERVICE(service_id, name) values (?, ?);";
         sqlite3_stmt *stmt = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -184,7 +188,8 @@ namespace impl {
         	sqlite3_finalize(stmt);
         	return;
         }
-    	sqlite3_bind_text(stmt, 1, item.name.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_int(stmt, 1, getLastId());
+    	sqlite3_bind_text(stmt, 2, item.name.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting SERVICE" << std::endl;
@@ -198,7 +203,7 @@ namespace impl {
 
     void ServiceDaoImpl::remove(const model::Service &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "DELETE FROM SERVICE where id = ?;";
+        const std::string sql = "DELETE FROM SERVICE where service_id = ?;";
         sqlite3_stmt *stmt = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -218,7 +223,23 @@ namespace impl {
     	sqlite3_finalize(stmt);
     }
 
+	int ServiceDaoImpl::getLastId() const {
+	    sqlite3 *bd = m_connector.getDB();
+    	const std::string sql {"select min(service_id)+1 from SERVICE "
+								"where service_id+1 not in (select service_id from SERVICE) "
+								"and exists (select 1 from SERVICE where service_id = 0);"};
+    	sqlite3_stmt *stmt = nullptr;
 
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get smallest id that doesn't exist" << std::endl;
+    		sqlite3_finalize(stmt);
+    		return -1;
+    	}
 
-
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		return sqlite3_column_int(stmt, 0);
+    	}
+    	sqlite3_finalize(stmt);
+    	return 0;
+    }
 } // impl
