@@ -10,6 +10,36 @@
 namespace impl {
     IdentifiantDaoImpl::IdentifiantDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
+	model::Identifiant<> IdentifiantDaoImpl::find(const int& id) {
+	    model::Identifiant<> ident {-1, "", "", false};
+    	sqlite3 *bd = m_connector.getDB();
+		const std::string sql {"SELECT * from LOGIN where login_id = ?;"};
+    	sqlite3_stmt *stmt = nullptr;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get LOGIN with id" << id << sqlite3_errmsg(bd) << std::endl;
+    		return ident;
+    	}
+
+    	sqlite3_bind_int(stmt, 1, id);
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		std::string password {};
+    		if (model::Encrypt::decrypt(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)), &password)) {
+    			ident.setID(sqlite3_column_int(stmt, 0));
+    			ident.setEmail(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)));
+    			ident.setPassword(password.data());
+    			sqlite3_finalize(stmt);
+    			return ident;
+    		}
+    		sqlite3_finalize(stmt);
+    		return ident;
+    	}
+
+    	sqlite3_finalize(stmt);
+    	std::cerr << "No LOGIN with id" << id << std::endl;
+    	return ident;
+    }
+
     std::vector<model::Identifiant<>> IdentifiantDaoImpl::findAll() {
         std::vector<model::Identifiant<>> identifiants;
     	std::vector<model::Service> services;
@@ -96,26 +126,58 @@ namespace impl {
         return identifiants;
     }
 
-    void IdentifiantDaoImpl::insert(const model::Identifiant<> &item) {
+    model::Identifiant<> IdentifiantDaoImpl::insert(model::Identifiant<> &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql_log = "INSERT INTO LOGIN(email, password) values (?, ?);";
+        const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password) values (?, ?, ?);";
         sqlite3_stmt *stmt_login = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql_log.c_str(), -1, &stmt_login, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
         	if (stmt_login) sqlite3_finalize(stmt_login);
-        	return;
+        	return item;
         }
-    	sqlite3_bind_text(stmt_login, 1, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
-    	sqlite3_bind_text(stmt_login, 2, item.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+    	std::string password {};
+    	if (model::Encrypt::encrypt(item.getPassword(), &password)) {
+    		sqlite3_bind_int(stmt_login, 1, getLastId());
+    		sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    		sqlite3_bind_text(stmt_login, 3, password.c_str(), -1, SQLITE_TRANSIENT);
 
-    	if (sqlite3_step(stmt_login) != SQLITE_DONE) {
-    		std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
+    		if (sqlite3_step(stmt_login) != SQLITE_DONE) {
+    			std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
+    			sqlite3_finalize(stmt_login);
+    			return item;
+    		}
+
     		sqlite3_finalize(stmt_login);
-    		return;
+    		std::cout << "inserted LOGIN" << std::endl;
+    		return item;
     	}
+
     	sqlite3_finalize(stmt_login);
-    	std::cout << "inserted LOGIN" << std::endl;
+    	return item;
+    }
+
+	model::Identifiant<> IdentifiantDaoImpl::update(const int &id, const model::Identifiant<> &newItem) {
+		sqlite3 *bd = m_connector.getDB();
+    	const std::string sql = {"UPDATE LOGIN SET email = ?, password = ? where login_id = ?;"};
+    	sqlite3_stmt *stmt;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to update LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
+    		sqlite3_finalize(stmt);
+    		return {-1, "", "", false};
+    	}
+    	sqlite3_bind_int(stmt, 1, getLastId());
+    	sqlite3_bind_text(stmt, 2, newItem.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+
+    	if (sqlite3_step(stmt) != SQLITE_DONE) {
+    		std::cerr << "Error updating LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
+    		sqlite3_finalize(stmt);
+    		return {-1, "", "", false};
+    	}
+
+    	sqlite3_finalize(stmt);
+    	return {-1, "", "", false};
     }
 
 	void IdentifiantDaoImpl::addService(const int &service_id, const model::Identifiant<> &item) {
@@ -161,5 +223,25 @@ namespace impl {
 
     	std::cout << "removed LOGIN" << std::endl;
     	sqlite3_finalize(stmt);
+    }
+
+	int IdentifiantDaoImpl::getLastId() const {
+    	sqlite3 *bd = m_connector.getDB();
+    	const std::string sql {"select min(login_id)+1 from LOGIN "
+								"where login_id+1 not in (select login_id from LOGIN) "
+								"and exists (select 1 from LOGIN where login_id = 0);"};
+    	sqlite3_stmt *stmt = nullptr;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get smallest id that doesn't exist" << std::endl;
+    		sqlite3_finalize(stmt);
+    		return -1;
+    	}
+
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		return sqlite3_column_int(stmt, 0);
+    	}
+    	sqlite3_finalize(stmt);
+    	return 0;
     }
 } // impl

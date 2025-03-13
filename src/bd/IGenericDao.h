@@ -14,8 +14,10 @@ namespace bd {
     public:
         virtual ~IGenericDAO() = default;
 
+    	virtual C find(const int & id) = 0;
         virtual std::vector<C> findAll() = 0;
-        virtual void insert(const C& item) = 0;
+        virtual C insert(C& item) = 0;
+    	virtual C update(const int& id, const C& newItem) = 0;
         virtual void remove(const C& item) = 0;
     };
 

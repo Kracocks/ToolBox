@@ -10,6 +10,31 @@
 namespace impl {
     ServiceDaoImpl::ServiceDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
+	model::Service ServiceDaoImpl::find(const int &id) {
+    	model::Service service {};
+    	service.id = -1;
+    	sqlite3 *bd = m_connector.getDB();
+		const std::string sql = "SELECT * FROM Service WHERE id = ?";
+    	sqlite3_stmt *stmt;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get SERVICE with id" << id << "\n" << sqlite3_errmsg(bd) << "\n";
+    		return service;
+    	}
+
+    	sqlite3_bind_int(stmt, 1, id);
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		service.id = sqlite3_column_int(stmt, 0);
+			service.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    		sqlite3_finalize(stmt);
+    		return service;
+    	}
+
+    	sqlite3_finalize(stmt);
+    	std::cerr << "No SERVICE with id" << id << "\n";
+    	return service;
+    }
+
     std::vector<model::Service> ServiceDaoImpl::findAll() {
         std::vector<model::Service> services {};
         sqlite3 *bd = m_connector.getDB();
@@ -19,7 +44,7 @@ namespace impl {
 
         int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
         if (status != SQLITE_OK) {
-            std::cerr << "Error preparing statement to get all SERVICE\n" << sqlite3_errmsg(bd) << std::endl;
+            std::cerr << "Error preparing statement to get all SERVICE\n" << sqlite3_errmsg(bd) << "\n" << std::endl;
             return services;
         }
 
@@ -142,8 +167,8 @@ namespace impl {
     		if ((email || password)) {
     			model::Identifiant<> login {
     				sqlite3_column_int(stmt, 2),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
+					reinterpret_cast<const char *>(email),
+					reinterpret_cast<const char *>(password),
 					false
 				};
     			service.identifiants.push_back(login);
@@ -178,27 +203,53 @@ namespace impl {
     	sqlite3_finalize(stmt);
     }
 
-    void ServiceDaoImpl::insert(const model::Service &item) {
+    model::Service ServiceDaoImpl::insert(model::Service &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "INSERT INTO SERVICE(service_id, name) values (?, ?);";
-        sqlite3_stmt *stmt = nullptr;
+        sqlite3_stmt *stmt;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        	std::cerr << "Error preparing statement to insert SERVICE" << std::endl;
-        	sqlite3_finalize(stmt);
-        	return;
-        }
-    	sqlite3_bind_int(stmt, 1, getLastId());
+			std::cerr << "Error preparing statement to insert SERVICE" << std::endl;
+			sqlite3_finalize(stmt);
+			return item;
+		}
+		const int id = getLastId();
+    	sqlite3_bind_int(stmt, 1, id);
     	sqlite3_bind_text(stmt, 2, item.name.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting SERVICE" << std::endl;
     		sqlite3_finalize(stmt);
-    		return;
+    		return item;
     	}
 
+    	item.id = id;
     	std::cout << "inserted SERVICE" << std::endl;
     	sqlite3_finalize(stmt);
+    	return item;
+    }
+
+	model::Service ServiceDaoImpl::update(const int& id, const model::Service& newItem) {
+	    sqlite3 *bd = m_connector.getDB();
+    	const std::string sql = "UPDATE SERVICE SET name = ? WHERE id = ?;";
+    	sqlite3_stmt *stmt;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to update SERVICE" << std::endl;
+    		sqlite3_finalize(stmt);
+    		return {-1, ""};
+    	}
+    	sqlite3_bind_int(stmt, 1, id);
+    	sqlite3_bind_text(stmt, 2, newItem.name.c_str(), -1, SQLITE_TRANSIENT);
+
+		if (sqlite3_step(stmt) != SQLITE_DONE) {
+			std::cerr << "Error updating SERVICE" << sqlite3_errmsg(bd) << std::endl;
+			if (stmt) sqlite3_finalize(stmt);
+			return {-1, ""};
+		}
+
+    	sqlite3_finalize(stmt);
+    	return newItem;
     }
 
     void ServiceDaoImpl::remove(const model::Service &item) {

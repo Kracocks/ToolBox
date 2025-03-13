@@ -44,13 +44,15 @@ namespace impl {
     	return std::vector<model::Token>{};
     }
 
-    void TokenDaoImpl::insert(const model::Token &item) {
+    model::Token TokenDaoImpl::insert(model::Token &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "INSERT INTO TOKEN(token_group_id, value) values (?, ?);";
         sqlite3_stmt *stmt = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert TOKEN" << std::endl;
+        	if (stmt) sqlite3_finalize(stmt);
+        	return {-1, -1, ""};
         }
     	sqlite3_bind_int(stmt, 1, item.tgroup_id);
     	sqlite3_bind_text(stmt, 2, item.value.c_str(), -1, SQLITE_STATIC);
@@ -58,11 +60,12 @@ namespace impl {
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting TOKEN" << std::endl;
     		sqlite3_finalize(stmt);
-    		return;
+    		return {-1, -1, ""};
     	}
 
     	std::cout << "inserted TOKEN" << std::endl;
     	sqlite3_finalize(stmt);
+    	return item;
     }
 
     void TokenDaoImpl::remove(const model::Token &item) {
