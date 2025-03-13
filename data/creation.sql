@@ -7,10 +7,11 @@ create table if not exists SERVICE(
 );
 
 create table if not exists LOGIN (
-     login_id integer primary key,
-     email text,
-     password text,
-     service_id int references SERVICE(service_id) on delete cascade
+    login_id integer primary key,
+    email text,
+    password text,
+    service_id int references SERVICE(service_id) on delete cascade,
+    unique (email, service_id)
 );
 
 create table if not exists TOKEN(
