@@ -13,6 +13,7 @@ namespace model {
 	struct Service {
 	    int id;
 	    std::string name;
+		std::string url;
 	    std::vector<Identifiant<>> identifiants;
 
 		void display() const;

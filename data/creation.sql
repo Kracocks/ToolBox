@@ -18,5 +18,6 @@ create table if not exists TOKEN(
     token_id integer primary key,
     login_id int references LOGIN(login_id) on delete cascade,
     value text not null,
+    description text,
     expired_at timestamp
 );
