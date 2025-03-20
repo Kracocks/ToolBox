@@ -23,14 +23,9 @@ namespace impl {
 
     	sqlite3_bind_int(stmt, 1, id);
     	if (sqlite3_step(stmt) == SQLITE_ROW) {
-    		std::string password {};
-    		if (model::Encrypt::decrypt(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)), &password)) {
-    			ident.setID(sqlite3_column_int(stmt, 0));
-    			ident.setEmail(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)));
-    			ident.setPassword(password.data());
-    			sqlite3_finalize(stmt);
-    			return ident;
-    		}
+    		ident.setID(sqlite3_column_int(stmt, 0));
+    		ident.setEmail(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)));
+    		ident.setPassword(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
     		sqlite3_finalize(stmt);
     		return ident;
     	}
@@ -162,24 +157,18 @@ namespace impl {
         	if (stmt_login) sqlite3_finalize(stmt_login);
         	return item;
         }
-    	std::string password {};
-    	if (model::Encrypt::encrypt(item.getPassword(), &password)) {
-    		sqlite3_bind_int(stmt_login, 1, getLastId());
-    		sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
-    		sqlite3_bind_text(stmt_login, 3, password.c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_int(stmt_login, 1, getLastId());
+    	sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_text(stmt_login, 3, item.getPassword().c_str(), -1, SQLITE_TRANSIENT);
 
-    		if (sqlite3_step(stmt_login) != SQLITE_DONE) {
-    			std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
-    			sqlite3_finalize(stmt_login);
-    			return item;
-    		}
-
+    	if (sqlite3_step(stmt_login) != SQLITE_DONE) {
+    		std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt_login);
-    		std::cout << "inserted LOGIN" << std::endl;
     		return item;
     	}
 
     	sqlite3_finalize(stmt_login);
+    	std::cout << "inserted LOGIN" << std::endl;
     	return item;
     }
 
