@@ -126,6 +126,32 @@ namespace impl {
         return identifiants;
     }
 
+	std::vector<model::Identifiant<>> IdentifiantDaoImpl::findByService(const int &service_id) {
+	    std::vector<model::Identifiant<>> identifiants;
+    	sqlite3 *bd = m_connector.getDB();
+    	const std::string sql = "SELECT login_id, email, password "
+    							"FROM SERVICE natural join LOGIN "
+    							"where service_id = ?";
+    	sqlite3_stmt *stmt;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get all LOGIN by service with id " << service_id << " : \n" << sqlite3_errmsg(bd) << std::endl;
+    		if (stmt) sqlite3_finalize(stmt);
+    		return identifiants;
+    	}
+    	sqlite3_bind_int(stmt, 1, service_id);
+
+    	while (sqlite3_step(stmt) == SQLITE_ROW) {
+			model::Identifiant<> identifiant = model::Identifiant<>(
+				sqlite3_column_int(stmt, 0),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
+				false);
+    		identifiants.push_back(identifiant);
+    	}
+    	return identifiants;
+    }
+
     model::Identifiant<> IdentifiantDaoImpl::insert(model::Identifiant<> &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password) values (?, ?, ?);";

@@ -23,6 +23,7 @@ namespace impl {
         std::vector<model::Identifiant<>> findAll() override;
         std::vector<model::Identifiant<>> findByEmail(std::string &&email);
         std::vector<model::Identifiant<>> findByEmail(const std::string &email);
+    	std::vector<model::Identifiant<>> findByService(const int &service_id);
         model::Identifiant<> insert(model::Identifiant<> &item) override;
     	model::Identifiant<> update(const int &id, const model::Identifiant<> &newItem) override;
     	void addService(const int &service, const model::Identifiant<> &login);
