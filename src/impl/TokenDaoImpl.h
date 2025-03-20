@@ -22,6 +22,7 @@ namespace impl {
         model::Token insert(const int &login_id, model::Token &item);
     	model::Token update(const int& id, const model::Token &newItem) override;
         void remove(const model::Token &item) override;
+    	[[nodiscard]] int getLastId() const;
     };
 
 } // impl

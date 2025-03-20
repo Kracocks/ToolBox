@@ -71,7 +71,7 @@ namespace impl {
         	if (stmt) sqlite3_finalize(stmt);
         	return {-1, "", "could not insert token", ""};
         }
-    	sqlite3_bind_int(stmt, 1, item.id);
+    	sqlite3_bind_int(stmt, 1, getLastId());
     	sqlite3_bind_int(stmt, 2, login_id);
     	sqlite3_bind_text(stmt, 3, item.value.c_str(), -1, SQLITE_STATIC);
     	sqlite3_bind_text(stmt, 3, item.description.c_str(), -1, SQLITE_STATIC);
@@ -135,6 +135,26 @@ namespace impl {
 
     	std::cout << "removed TOKEN" << std::endl;
     	sqlite3_finalize(stmt);
+    }
+
+	int TokenDaoImpl::getLastId() const{
+    	sqlite3 *bd = m_connector.getDB();
+    	const std::string sql {"select min(token_id)+1 from TOKEN "
+								"where token_id+1 not in (select token_id from TOKEN) "
+								"and exists (select 1 from TOKEN where token_id = 0);"};
+    	sqlite3_stmt *stmt = nullptr;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get smallest id that doesn't exist" << std::endl;
+    		sqlite3_finalize(stmt);
+    		return -1;
+    	}
+
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		return sqlite3_column_int(stmt, 0);
+    	}
+    	sqlite3_finalize(stmt);
+    	return 0;
     }
 
 } // impl
