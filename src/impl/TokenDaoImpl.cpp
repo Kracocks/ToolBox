@@ -88,6 +88,33 @@ namespace impl {
     	return item;
     }
 
+	model::Token TokenDaoImpl::update(const int &id, const model::Token &newItem) {
+	    sqlite3 *bd = m_connector.getDB();
+    	const std::string sql {"update TOKEN set value = ?, description = ?, expired_at = ? where token_id = ?;"};
+    	sqlite3_stmt *stmt = nullptr;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to update TOKEN" << std::endl;
+    		if (stmt) sqlite3_finalize(stmt);
+    		return {-1, "", "could not update token", ""};
+    	}
+    	sqlite3_bind_text(stmt, 1, newItem.value.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 2, newItem.description.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 3, newItem.expired_at.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_int(stmt, 4, newItem.id);
+
+    	if (sqlite3_step(stmt) != SQLITE_DONE) {
+    		std::cerr << "Error updating TOKEN" << std::endl;
+    		sqlite3_finalize(stmt);
+    		return {-1, "", "could not update token", ""};
+    	}
+
+    	sqlite3_finalize(stmt);
+    	std::cout << "updated TOKEN" << std::endl;
+    	return newItem;
+
+    }
+
     void TokenDaoImpl::remove(const model::Token &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "DELETE FROM TOKEN where token_id = ?;";
