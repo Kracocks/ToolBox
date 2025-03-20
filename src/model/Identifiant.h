@@ -9,14 +9,12 @@
 #include <string>
 #include <vector>
 
-#include "Encrypt.h"
 #include "Token.h"
 
 namespace model {
-	template <typename Int=int, typename Str=std::string, typename Bool=bool, typename T=Token>
+	template <typename Int=int, typename Str=std::string, typename T=Token>
     requires std::same_as<Int, int> &&
     		 std::same_as<Str, std::string> &&
-    		 std::same_as<Bool, bool> &&
     		 std::same_as<T, Token>
     class Identifiant {
         Int m_id;
@@ -32,18 +30,12 @@ namespace model {
          * @param id ID of the login
          * @param email Email of the login
          * @param password password of the login
-         * @param shouldEncrypt encrypt the password if it needs to be encrypted
          */
-        Identifiant(Int &&id, Str &&email, Str &&password, Bool &&shouldEncrypt)
+        Identifiant(Int &&id, Str &&email, Str &&password)
             : m_id(std::forward<Int>(id)),
               m_email(std::forward<Str>(email)),
               m_password(std::forward<Str>(password)),
 			  m_tokens({}) {
-			if (shouldEncrypt) {
-				std::string encrypted {};
-				Encrypt::encrypt(email, &encrypted);
-				password = encrypted;
-			}
         }
 
         /**

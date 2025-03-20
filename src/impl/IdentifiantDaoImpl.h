@@ -26,7 +26,6 @@ namespace impl {
     	std::vector<model::Identifiant<>> findByService(const int &service_id);
         model::Identifiant<> insert(const int &service_id, model::Identifiant<> &item);
     	model::Identifiant<> update(const int &id, const model::Identifiant<> &newItem) override;
-    	void addService(const int &service, const model::Identifiant<> &login);
         void remove(const model::Identifiant<> &item) override;
     	[[nodiscard]] int getLastId() const;
     };

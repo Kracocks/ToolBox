@@ -11,7 +11,7 @@ namespace impl {
     IdentifiantDaoImpl::IdentifiantDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
 	model::Identifiant<> IdentifiantDaoImpl::find(const int& id) {
-	    model::Identifiant<> ident {-1, "", "", false};
+	    model::Identifiant<> ident {-1, "", ""};
     	sqlite3 *bd = m_connector.getDB();
 		const std::string sql {"SELECT * from LOGIN where login_id = ?;"};
     	sqlite3_stmt *stmt = nullptr;
@@ -54,8 +54,7 @@ namespace impl {
             model::Identifiant<> identifiant = model::Identifiant<>(
             	sqlite3_column_int(stmt, 0),
             	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-            	false);
+            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
         	identifiants.push_back(identifiant);
         }
 
@@ -83,8 +82,7 @@ namespace impl {
             model::Identifiant<> identifiant = model::Identifiant<>(
 				sqlite3_column_int(stmt, 0),
             	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-            	false);
+            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
         	identifiants.push_back(identifiant);
         }
 
@@ -112,8 +110,7 @@ namespace impl {
     		model::Identifiant<> identifiant = model::Identifiant<>(
 				sqlite3_column_int(stmt, 0),
 				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-				false);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
     		identifiants.push_back(identifiant);
     	}
 
@@ -140,8 +137,7 @@ namespace impl {
 			model::Identifiant<> identifiant = model::Identifiant<>(
 				sqlite3_column_int(stmt, 0),
 				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-				false);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
     		identifiants.push_back(identifiant);
     	}
     	return identifiants;
@@ -181,7 +177,7 @@ namespace impl {
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to update LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", false};
+    		return {-1, "", ""};
     	}
     	sqlite3_bind_int(stmt, 1, getLastId());
     	sqlite3_bind_text(stmt, 2, newItem.getPassword().c_str(), -1, SQLITE_TRANSIENT);
@@ -189,11 +185,11 @@ namespace impl {
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error updating LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", false};
+    		return {-1, "", ""};
     	}
 
     	sqlite3_finalize(stmt);
-    	return {-1, "", "", false};
+    	return {-1, "", ""};
     }
 
     void IdentifiantDaoImpl::remove(const model::Identifiant<> &item) {

@@ -70,8 +70,7 @@ namespace impl {
         		model::Identifiant<> login {
         			sqlite3_column_int(stmt, 2),
 					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
-					false
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))
 				};
 				service.identifiants.push_back(login);
         	}
@@ -119,8 +118,7 @@ namespace impl {
     			model::Identifiant<> login {
     				sqlite3_column_int(stmt, 2),
 					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)),
-					false
+					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))
 				};
     			service.identifiants.push_back(login);
     		}
@@ -168,8 +166,7 @@ namespace impl {
     			model::Identifiant<> login {
     				sqlite3_column_int(stmt, 2),
 					reinterpret_cast<const char *>(email),
-					reinterpret_cast<const char *>(password),
-					false
+					reinterpret_cast<const char *>(password)
 				};
     			service.identifiants.push_back(login);
     		}
