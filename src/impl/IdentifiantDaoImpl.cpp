@@ -147,9 +147,9 @@ namespace impl {
     	return identifiants;
     }
 
-    model::Identifiant<> IdentifiantDaoImpl::insert(model::Identifiant<> &item) {
+    model::Identifiant<> IdentifiantDaoImpl::insert(const int &service_id, model::Identifiant<> &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password) values (?, ?, ?);";
+        const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password, service_id) values (?, ?, ?, ?);";
         sqlite3_stmt *stmt_login = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql_log.c_str(), -1, &stmt_login, nullptr) != SQLITE_OK) {
@@ -160,6 +160,7 @@ namespace impl {
     	sqlite3_bind_int(stmt_login, 1, getLastId());
     	sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
     	sqlite3_bind_text(stmt_login, 3, item.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_int(stmt_login, 4, service_id);
 
     	if (sqlite3_step(stmt_login) != SQLITE_DONE) {
     		std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
