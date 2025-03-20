@@ -9,6 +9,32 @@
 namespace impl {
     TokenDaoImpl::TokenDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
+	model::Token TokenDaoImpl::find(const int &id) {
+		model::Token token {-1, "", "Could not get token with id "+id, ""};
+    	sqlite3 *bd = m_connector.getDB();
+    	const std::string sql {"select token_id, value, description, expired_at from TOKEN where token_id = ?"};
+		sqlite3_stmt *stmt = nullptr;
+
+    	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get TOKEN with id " << id << "\n" << sqlite3_errmsg(bd) << std::endl;
+    		return token;
+    	}
+
+    	sqlite3_bind_int(stmt, 1, id);
+    	if (sqlite3_step(stmt) == SQLITE_ROW) {
+    		token.id = sqlite3_column_int(stmt, 0);
+    		token.value = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    		token.description = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    		token.expired_at = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+    		sqlite3_finalize(stmt);
+    		return token;
+    	}
+
+    	sqlite3_finalize(stmt);
+    	std::cerr << "No such TOKEN with id " << id << std::endl;
+    	return token;
+    }
+
     std::vector<model::Token> TokenDaoImpl::findAll() {
         std::vector<model::Token> tokens;
         sqlite3 *bd = m_connector.getDB();
