@@ -12,7 +12,7 @@ namespace impl {
     std::vector<model::Token> TokenDaoImpl::findAll() {
         std::vector<model::Token> tokens;
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "SELECT token_id, token_group_id, value FROM TOKEN;";
+        const std::string sql = "SELECT token_id, value, description, expired_at FROM TOKEN;";
         sqlite3_stmt *stmt;
 
         int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
@@ -24,8 +24,9 @@ namespace impl {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             model::Token token{
             	sqlite3_column_int(stmt, 0),
-            	sqlite3_column_int(stmt, 1),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2))};
+            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
+            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3))};
             tokens.push_back(token);
         }
 
@@ -34,33 +35,26 @@ namespace impl {
         return tokens;
     }
 
-    std::vector<model::Token> TokenDaoImpl::findByValue(std::string &&value) {
-        // When I first made this method I didn't think enough about how it is stupid
-    	// But now that I noticed it I will let this because this is funny
-        return std::vector<model::Token>{};
-    }
-
-    std::vector<model::Token> TokenDaoImpl::findByValue(const std::string &value) {
-    	return std::vector<model::Token>{};
-    }
-
-    model::Token TokenDaoImpl::insert(model::Token &item) {
+    model::Token TokenDaoImpl::insert(const int &login_id, model::Token &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "INSERT INTO TOKEN(token_group_id, value) values (?, ?);";
+        const std::string sql = "INSERT INTO TOKEN(token_id, login_id, value, description, expired_at) values (?, ?, ?, ?, ?);";
         sqlite3_stmt *stmt = nullptr;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert TOKEN" << std::endl;
         	if (stmt) sqlite3_finalize(stmt);
-        	return {-1, -1, ""};
+        	return {-1, "", "could not insert token", ""};
         }
-    	sqlite3_bind_int(stmt, 1, item.tgroup_id);
-    	sqlite3_bind_text(stmt, 2, item.value.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_int(stmt, 1, item.id);
+    	sqlite3_bind_int(stmt, 2, login_id);
+    	sqlite3_bind_text(stmt, 3, item.value.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 3, item.description.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 3, item.expired_at.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting TOKEN" << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, -1, ""};
+    		return {-1, "", "could not insert token", ""};
     	}
 
     	std::cout << "inserted TOKEN" << std::endl;
