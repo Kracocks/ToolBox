@@ -9,6 +9,9 @@ add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(libs/Catch2)
 
+configure_file(${CMAKE_SOURCE_DIR}/data/creation.sql ${CMAKE_BINARY_DIR}/data/creation.sql COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/passwords.sqlite ${CMAKE_BINARY_DIR}/data/passwords.sqlite COPYONLY)
+
 target_link_libraries(${PROJECT_NAME}
     model
     bd

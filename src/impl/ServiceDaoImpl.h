@@ -10,7 +10,7 @@
 
 namespace impl {
 
-    class ServiceDaoImpl final: public bd::IGenericDAO<model::Service> {
+    class ServiceDaoImpl: public bd::IGenericDAO<model::Service> {
         bd::Connector &m_connector;
 
     public:
@@ -18,11 +18,15 @@ namespace impl {
 
         ~ServiceDaoImpl() override = default;
 
+    	model::Service find(const int &id) override;
         std::vector<model::Service> findAll() override;
         std::vector<model::Service> findByName(std::string &&name);
         std::vector<model::Service> findByName(const std::string &name);
-        void insert(const model::Service &item) override;
+    	void addLogin(const int &service_id, const model::Identifiant<> &item);
+        model::Service insert(model::Service &item) override;
+    	model::Service update(const int &id, const model::Service &newItem) override;
         void remove(const model::Service &item) override;
+    	[[nodiscard]] int getLastId() const;
     };
 
 } // impl

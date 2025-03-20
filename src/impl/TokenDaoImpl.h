@@ -10,18 +10,19 @@
 
 namespace impl {
 
-    class TokenDaoImpl final: public bd::IGenericDAO<model::Token> {
+    class TokenDaoImpl : public bd::IGenericDAO<model::Token> {
         bd::Connector &m_connector;
 
     public:
         explicit TokenDaoImpl();
         ~TokenDaoImpl() override = default;
 
+    	model::Token find(const int & id) override;
         std::vector<model::Token> findAll() override;
-        std::vector<model::Token> findByValue(std::string &&value);
-        std::vector<model::Token> findByValue(const std::string &value);
-        void insert(const model::Token &item) override;
+        model::Token insert(const int &login_id, model::Token &item);
+    	model::Token update(const int& id, const model::Token &newItem) override;
         void remove(const model::Token &item) override;
+    	[[nodiscard]] int getLastId() const;
     };
 
 } // impl

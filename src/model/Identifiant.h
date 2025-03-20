@@ -10,23 +10,19 @@
 #include <vector>
 
 #include "Encrypt.h"
+#include "Token.h"
 
 namespace model {
-	struct TokenGroup;
-	struct Service;
-
-	template <typename Int=int, typename Str=std::string, typename Ser=Service, typename Bool=bool, typename TGroup=TokenGroup>
+	template <typename Int=int, typename Str=std::string, typename Bool=bool, typename T=Token>
     requires std::same_as<Int, int> &&
     		 std::same_as<Str, std::string> &&
-    		 std::same_as<Ser, Service> &&
     		 std::same_as<Bool, bool> &&
-    		 std::same_as<TGroup, TokenGroup>
+    		 std::same_as<T, Token>
     class Identifiant {
         Int m_id;
         Str m_email;
         Str m_password;
-        std::vector<Ser> m_services;
-		std::vector<TGroup> m_token_groups;
+		std::vector<T> m_tokens;
 
     public:
         Identifiant() = delete;
@@ -42,8 +38,7 @@ namespace model {
             : m_id(std::forward<Int>(id)),
               m_email(std::forward<Str>(email)),
               m_password(std::forward<Str>(password)),
-              m_services({}),
-			  m_token_groups({}) {
+			  m_tokens({}) {
 			if (shouldEncrypt) {
 				std::string encrypted {};
 				Encrypt::encrypt(email, &encrypted);
@@ -69,17 +64,11 @@ namespace model {
          */
         [[nodiscard]] Str getPassword() const {return m_password;}
 
-        /**
-         * Get the Services associated to the login
-         * @return Services associated to the login
-         */
-        [[nodiscard]] std::vector<Ser> getServices() const {return m_services; }
-
 		/**
-		 * Get the Token Groups associated to the login
-		 * @return Token Groups associated to the login
+		 * Get the Tokens associated to the login
+		 * @return Tokens associated to the login
 		 */
-		[[nodiscard]] std::vector<TGroup> getTokenGroups() const {return m_token_groups;}
+		[[nodiscard]] std::vector<T> getTokens() const {return m_tokens;}
 
         /**
          * Set the ID of the login
@@ -105,44 +94,28 @@ namespace model {
          */
         void setPassword(const Str &&password) {m_password = std::move(password);}
 
-        /**
-         * Add a new service to the login
-         * @param service New service to associate to the login
-         */
-        void addService(const Ser &&service) {m_services.push_back(service);}
-
-        /**
-         * Remove a service associated to the login
-         * @param service Service associated to the login
-         */
-        void removeService(const Ser &&service) {
-        	Ser it = std::find(m_services.begin(), m_services.end(), service);
-        	if (it != m_services.end()) {
-        		m_services.erase(it);
-        	}
-        }
+		/**
+		 * Add a new token to the login
+		 * @param token New token group to associate to the login
+		 */
+		void addTokenGroup(const T &&token) {m_tokens.push_back(token); }
 
 		/**
-		 * Add a new token group to the login
-		 * @param token_group New token group to associate to the login
+		 * Remove a token associated to the login
+		 * @param token Token associated to the login
 		 */
-		void addTokenGroup(const TGroup &&token_group) {m_token_groups.push_back(token_group); }
-
-		/**
-		 * Remove a token group associated to the login
-		 * @param token_group Token group associated to the login
-		 */
-		void removeTokenGroup(const TGroup &&token_group) {
-	        TGroup it = std::find(m_token_groups.begin(), m_token_groups.end(), token_group);
-        	if (it != m_token_groups.end()) {
-        		m_token_groups.erase(it);
+		void removeTokenGroup(const T &&token) {
+	        T it = std::find(m_tokens.begin(), m_tokens.end(), token);
+        	if (it != m_tokens.end()) {
+        		m_tokens.erase(it);
         	}
         }
 
     	void display() const {
 	        std::cout << "Email : " <<  m_email << "\tPassword : " << m_password << "\n";
-        	for (const TGroup &group : m_token_groups) {
-        		group.display();
+        	for (const T &token : m_tokens) {
+        		std::cout << "\t";
+        		token.display();
         	}
         }
 
@@ -152,7 +125,7 @@ namespace model {
          * @return True if the two objects are the same
          */
         bool operator==(const Identifiant &other) const {
-            return m_email == other.m_email && m_password == other.m_password;
+            return m_email == other.m_email && m_password == other.m_password && m_tokens == other.m_tokens;
         }
     };
 

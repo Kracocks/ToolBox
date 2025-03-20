@@ -8,8 +8,6 @@ add_library(impl STATIC
         IdentifiantDaoImpl.h
         TokenDaoImpl.cpp
         TokenDaoImpl.h
-        TokenGroupDaoImpl.cpp
-        TokenGroupDaoImpl.h
         ServiceDaoImpl.cpp
         ServiceDaoImpl.h)
 

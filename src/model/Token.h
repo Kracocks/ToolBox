@@ -6,13 +6,12 @@
 #define TOKEN_H
 #include <string>
 
-#include "TokenGroup.h"
-
 namespace model {
 	struct Token {
 		int id;
-		int tgroup_id;
 		std::string value;
+		std::string description;
+		std::string expired_at;
 
 		void display() const;
 

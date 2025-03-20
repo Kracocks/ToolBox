@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "src/model/Identifiant.h"
-#include "src/model/Service.h"
 #include "src/bd/Connector.h"
 
 int main() {

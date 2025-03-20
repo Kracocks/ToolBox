@@ -8,24 +8,13 @@
 #include <vector>
 
 #include "Identifiant.h"
-#include "TokenGroup.h"
 
 namespace model {
-	struct Service;
-	struct TokenGroup;
-
-	template <typename Int, typename Str, typename Ser, typename Bool, typename TGroup>
-	requires std::same_as<Int, int> &&
-			 std::same_as<Str, std::string> &&
-			 std::same_as<Ser, Service> &&
-			 std::same_as<Bool, bool> &&
-			 std::same_as<TGroup, TokenGroup>
-	class Identifiant;
-
 	struct Service {
 	    int id;
 	    std::string name;
-	    std::vector<Identifiant<int, std::string, Service, bool, TokenGroup>> identifiants;
+		std::string url;
+	    std::vector<Identifiant<>> identifiants;
 
 		void display() const;
 	};

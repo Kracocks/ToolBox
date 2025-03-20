@@ -4,14 +4,14 @@
 
 #ifndef IDENTIFIANTDAOIMPL_H
 #define IDENTIFIANTDAOIMPL_H
-
+#include <vector>
 #include "../bd/Connector.h"
 #include "../bd/IGenericDao.h"
 #include "../model/Identifiant.h"
 
 namespace impl {
 
-    class IdentifiantDaoImpl final : public bd::IGenericDAO<model::Identifiant<>> {
+    class IdentifiantDaoImpl : public bd::IGenericDAO<model::Identifiant<>> {
         bd::Connector &m_connector;
 
     public:
@@ -19,11 +19,16 @@ namespace impl {
 
         ~IdentifiantDaoImpl() override = default;
 
+    	model::Identifiant<> find(const int &id) override;
         std::vector<model::Identifiant<>> findAll() override;
         std::vector<model::Identifiant<>> findByEmail(std::string &&email);
         std::vector<model::Identifiant<>> findByEmail(const std::string &email);
-        void insert(const model::Identifiant<> &item) override;
+    	std::vector<model::Identifiant<>> findByService(const int &service_id);
+        model::Identifiant<> insert(const int &service_id, model::Identifiant<> &item);
+    	model::Identifiant<> update(const int &id, const model::Identifiant<> &newItem) override;
+    	void addService(const int &service, const model::Identifiant<> &login);
         void remove(const model::Identifiant<> &item) override;
+    	[[nodiscard]] int getLastId() const;
     };
 
 } // impl

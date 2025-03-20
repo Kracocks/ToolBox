@@ -3,6 +3,9 @@
 
 #include "Connector.h"
 
+#include <fstream>
+#include <sstream>
+
 namespace bd {
     // Protected
     Connector *Connector::m_connector = nullptr;
@@ -13,27 +16,42 @@ namespace bd {
             return;
         }
 
-        // Ouvrir la base de données
+        // Open database
         int res = sqlite3_open(dbFilePath.c_str(), &m_bd);
         if (res != SQLITE_OK) {
-            std::cerr << "Erreur lors de l'ouverture de la base de données : "
+            std::cerr << "Error while opening database : "
                       << sqlite3_errmsg(m_bd) << std::endl;
             if (m_bd) sqlite3_close(m_bd);
             m_bd = nullptr;
             return;
         }
 
-        // Définir la clé pour SQLCipher
+        // Define database key
         std::string pragma_key = "PRAGMA key = '" + key + "';";
         char* err_msg = nullptr;
         res = sqlite3_exec(m_bd, pragma_key.c_str(), nullptr, nullptr, &err_msg);
         if (res != SQLITE_OK) {
-            std::cerr << "Erreur lors de l'application de la clé : " << err_msg << std::endl;
+            std::cerr << "Error when applying database key : " << err_msg << std::endl;
             sqlite3_free(err_msg);
             sqlite3_close(m_bd);
             m_bd = nullptr;
             return;
         }
+
+    	std::ifstream schemaFile("data/creation.sql");
+    	if (schemaFile) {
+    		std::ostringstream buffer;
+    		buffer << schemaFile.rdbuf();
+    		std::string sql = buffer.str();
+
+    		res = sqlite3_exec(m_bd, sql.c_str(), nullptr, nullptr, &err_msg);
+    		if (res != SQLITE_OK) {
+    			std::cerr << "Error when executing SQL file : " << err_msg << std::endl;
+    			sqlite3_free(err_msg);
+    		}
+    	} else {
+    		std::cerr << "Cannot load creation.sql file" << std::endl;
+    	}
     }
 
     // Public
@@ -54,7 +72,7 @@ namespace bd {
 
     Connector &Connector::getInstance() {
         if (m_connector == nullptr)
-            m_connector = new Connector("passwords.sqlite", std::getenv("DB_KEY"));
+            m_connector = new Connector("data/passwords.sqlite", std::getenv("DB_KEY"));
         return *m_connector;
     }
 } // bd

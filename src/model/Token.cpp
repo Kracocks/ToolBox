@@ -8,10 +8,13 @@
 
 namespace model {
     void Token::display() const {
-	    std::cout << value << "\n";
+	    std::cout << description << "\n" << value << " expires at" << expired_at << "\n";
     }
 
 	bool Token::operator==(const Token &other) const {
-	    return (id == other.id) && (value == other.value);
+	    return  (id == other.id) &&
+	    		(value == other.value) &&
+	    		(description == other.description) &&
+	    		(expired_at == other.expired_at);
     }
 } // model
