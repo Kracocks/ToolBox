@@ -10,9 +10,9 @@ namespace impl {
     TokenDaoImpl::TokenDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
 	model::Token TokenDaoImpl::find(const int &id) {
-		model::Token token {-1, "", "Could not get token with id "+id, ""};
+		model::Token token {-1, -1, "", "Could not get token with id "+id, ""};
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql {"select token_id, value, description, expired_at from TOKEN where token_id = ?"};
+    	const std::string sql {"select token_id, login_id, value, description, expired_at from TOKEN where token_id = ?"};
 		sqlite3_stmt *stmt = nullptr;
 
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -23,9 +23,10 @@ namespace impl {
     	sqlite3_bind_int(stmt, 1, id);
     	if (sqlite3_step(stmt) == SQLITE_ROW) {
     		token.id = sqlite3_column_int(stmt, 0);
-    		token.value = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-    		token.description = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
-    		token.expired_at = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+    		token.login_id = sqlite3_column_int(stmt, 1);
+    		token.value = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    		token.description = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+    		token.expired_at = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
     		sqlite3_finalize(stmt);
     		return token;
     	}
@@ -38,7 +39,7 @@ namespace impl {
     std::vector<model::Token> TokenDaoImpl::findAll() {
         std::vector<model::Token> tokens;
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "SELECT token_id, value, description, expired_at FROM TOKEN;";
+        const std::string sql = "SELECT token_id, login_id, value, description, expired_at FROM TOKEN;";
         sqlite3_stmt *stmt;
 
         int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
@@ -50,9 +51,10 @@ namespace impl {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             model::Token token{
             	sqlite3_column_int(stmt, 0),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
+            	sqlite3_column_int(stmt, 1),
             	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3))};
+            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))};
             tokens.push_back(token);
         }
 
@@ -61,7 +63,7 @@ namespace impl {
         return tokens;
     }
 
-    model::Token TokenDaoImpl::insert(const int &login_id, model::Token &item) {
+    model::Token TokenDaoImpl::insert(model::Token &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "INSERT INTO TOKEN(token_id, login_id, value, description, expired_at) values (?, ?, ?, ?, ?);";
         sqlite3_stmt *stmt = nullptr;
@@ -69,10 +71,10 @@ namespace impl {
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert TOKEN" << std::endl;
         	if (stmt) sqlite3_finalize(stmt);
-        	return {-1, "", "could not insert token", ""};
+        	return {-1, -1, "", "could not insert token", ""};
         }
     	sqlite3_bind_int(stmt, 1, getLastId());
-    	sqlite3_bind_int(stmt, 2, login_id);
+    	sqlite3_bind_int(stmt, 2, item.login_id);
     	sqlite3_bind_text(stmt, 3, item.value.c_str(), -1, SQLITE_STATIC);
     	sqlite3_bind_text(stmt, 3, item.description.c_str(), -1, SQLITE_STATIC);
     	sqlite3_bind_text(stmt, 3, item.expired_at.c_str(), -1, SQLITE_STATIC);
@@ -80,7 +82,7 @@ namespace impl {
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting TOKEN" << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "could not insert token", ""};
+    		return {-1, -1, "", "could not insert token", ""};
     	}
 
     	std::cout << "inserted TOKEN" << std::endl;
@@ -96,7 +98,7 @@ namespace impl {
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to update TOKEN" << std::endl;
     		if (stmt) sqlite3_finalize(stmt);
-    		return {-1, "", "could not update token", ""};
+    		return {-1, -1, "", "could not update token", ""};
     	}
     	sqlite3_bind_text(stmt, 1, newItem.value.c_str(), -1, SQLITE_STATIC);
     	sqlite3_bind_text(stmt, 2, newItem.description.c_str(), -1, SQLITE_STATIC);
@@ -106,7 +108,7 @@ namespace impl {
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error updating TOKEN" << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "could not update token", ""};
+    		return {-1, -1, "", "could not update token", ""};
     	}
 
     	sqlite3_finalize(stmt);
