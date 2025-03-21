@@ -14,7 +14,6 @@ namespace model {
 	    int id;
 	    std::string name;
 		std::string url;
-	    std::vector<Identifiant<>> identifiants;
 
 		void display() const;
 	};

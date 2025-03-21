@@ -9,6 +9,7 @@
 namespace model {
 	struct Token {
 		int id;
+		int login_id;
 		std::string value;
 		std::string description;
 		std::string expired_at;

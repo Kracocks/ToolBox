@@ -11,10 +11,10 @@ namespace impl {
     ServiceDaoImpl::ServiceDaoImpl(): m_connector(bd::Connector::getInstance()) {}
 
 	model::Service ServiceDaoImpl::find(const int &id) {
-    	model::Service service {};
+    	model::Service service {-1, "Could not find service", ""};
     	service.id = -1;
     	sqlite3 *bd = m_connector.getDB();
-		const std::string sql = "SELECT * FROM Service WHERE id = ?";
+		const std::string sql = "SELECT service_id, name, url FROM SERVICE WHERE service_id = ?";
     	sqlite3_stmt *stmt;
 
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -26,6 +26,7 @@ namespace impl {
     	if (sqlite3_step(stmt) == SQLITE_ROW) {
     		service.id = sqlite3_column_int(stmt, 0);
 			service.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    		service.url = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     		sqlite3_finalize(stmt);
     		return service;
     	}
@@ -38,8 +39,7 @@ namespace impl {
     std::vector<model::Service> ServiceDaoImpl::findAll() {
         std::vector<model::Service> services {};
         sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
-								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN;";
+    	const std::string sql = "SELECT service_id, name, url FROM SERVICE;";
         sqlite3_stmt *stmt;
 
         int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
@@ -49,31 +49,11 @@ namespace impl {
         }
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-        	model::Service service;
-        	service.id = -1;
-        	const int service_id {sqlite3_column_int(stmt, 0)};
-        	for (model::Service &serv : services) {
-        		if (serv.id == service_id) {
-        			service = serv;
-        		}
-        	}
-        	if (service.id == -1) {
-        		service = model::Service {
-        			service_id,
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
-				};
-        		services.push_back(service);
-        	}
-			const unsigned char *email = sqlite3_column_text(stmt, 3);
-        	const unsigned char *password = sqlite3_column_text(stmt, 4);
-			if ((email || password)) {
-        		model::Identifiant<> login {
-        			sqlite3_column_int(stmt, 2),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))
-				};
-				service.identifiants.push_back(login);
-        	}
+        	model::Service service {-1, "Could not find service", ""};
+        	service.id = sqlite3_column_int(stmt, 0);
+        	service.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        	service.url = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+        	services.push_back(service);
         }
 
         sqlite3_finalize(stmt);
@@ -83,9 +63,7 @@ namespace impl {
 	std::vector<model::Service> ServiceDaoImpl::findByName(std::string &&name) {
     	std::vector<model::Service> services;
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
-								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN "
-								"where name LIKE ?;";
+    	const std::string sql = "SELECT service_id, name, url FROM SERVICE where name LIKE ?;";
     	sqlite3_stmt *stmt;
 
     	int status = sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr);
@@ -97,31 +75,11 @@ namespace impl {
     	sqlite3_bind_text(stmt, 1, (name + '%').c_str(), -1, SQLITE_TRANSIENT);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-    		model::Service service;
-    		service.id = -1;
-    		const int service_id {sqlite3_column_int(stmt, 0)};
-    		for (model::Service &serv : services) {
-    			if (serv.id == service_id) {
-    				service = serv;
-    			}
-    		}
-    		if (service.id == -1) {
-    			service = model::Service {
-    				service_id,
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
-				};
-    			services.push_back(service);
-    		}
-    		const unsigned char *email = sqlite3_column_text(stmt, 3);
-    		const unsigned char *password = sqlite3_column_text(stmt, 4);
-    		if ((email || password)) {
-    			model::Identifiant<> login {
-    				sqlite3_column_int(stmt, 2),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))
-				};
-    			service.identifiants.push_back(login);
-    		}
+    		model::Service service {-1, "Could not find service", ""};
+    		service.id = sqlite3_column_int(stmt, 0);
+    		service.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    		service.url = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    		services.push_back(service);
     	}
 
     	sqlite3_finalize(stmt);
@@ -131,9 +89,7 @@ namespace impl {
 	std::vector<model::Service> ServiceDaoImpl::findByName(const std::string &name) {
     	std::vector<model::Service> services;
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT SERVICE.service_id, SERVICE.name, LOGIN.login_id, LOGIN.email, LOGIN.password "
-								"FROM SERVICE LEFT JOIN USE LEFT JOIN LOGIN "
-								"where name LIKE ?;";
+    	const std::string sql = "SELECT service_id, name, url FROM SERVICE where name LIKE ?;";
     	sqlite3_stmt *stmt;
 
     	int status = sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr);
@@ -145,31 +101,11 @@ namespace impl {
     	sqlite3_bind_text(stmt, 1, (name + '%').c_str(), -1, SQLITE_TRANSIENT);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-    		model::Service service;
-    		service.id = -1;
-    		const int service_id {sqlite3_column_int(stmt, 0)};
-    		for (model::Service &serv : services) {
-    			if (serv.id == service_id) {
-    				service = serv;
-    			}
-    		}
-    		if (service.id == -1) {
-    			service = model::Service {
-    				service_id,
-					reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
-				};
-    			services.push_back(service);
-    		}
-    		const unsigned char *email = sqlite3_column_text(stmt, 3);
-    		const unsigned char *password = sqlite3_column_text(stmt, 4);
-    		if ((email || password)) {
-    			model::Identifiant<> login {
-    				sqlite3_column_int(stmt, 2),
-					reinterpret_cast<const char *>(email),
-					reinterpret_cast<const char *>(password)
-				};
-    			service.identifiants.push_back(login);
-    		}
+    		model::Service service {-1, "Could not find service", ""};
+    		service.id = sqlite3_column_int(stmt, 0);
+    		service.name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    		service.url = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    		services.push_back(service);
     	}
 
     	sqlite3_finalize(stmt);
@@ -178,7 +114,7 @@ namespace impl {
 
     model::Service ServiceDaoImpl::insert(model::Service &item) {
         sqlite3 *bd = m_connector.getDB();
-        const std::string sql = "INSERT INTO SERVICE(service_id, name) values (?, ?);";
+        const std::string sql = "INSERT INTO SERVICE(service_id, name, url) values (?, ?, ?);";
         sqlite3_stmt *stmt;
 
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
@@ -189,6 +125,7 @@ namespace impl {
 		const int id = getLastId();
     	sqlite3_bind_int(stmt, 1, id);
     	sqlite3_bind_text(stmt, 2, item.name.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 3, item.url.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting SERVICE" << std::endl;
@@ -204,21 +141,22 @@ namespace impl {
 
 	model::Service ServiceDaoImpl::update(const int& id, const model::Service& newItem) {
 	    sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "UPDATE SERVICE SET name = ? WHERE id = ?;";
+    	const std::string sql = "UPDATE SERVICE SET name = ?, url = ? WHERE service_id = ?;";
     	sqlite3_stmt *stmt;
 
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to update SERVICE" << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, ""};
+    		return {-1, "Could not update service", ""};
     	}
-    	sqlite3_bind_int(stmt, 1, id);
-    	sqlite3_bind_text(stmt, 2, newItem.name.c_str(), -1, SQLITE_TRANSIENT);
+    	sqlite3_bind_text(stmt, 1, newItem.name.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_text(stmt, 2, newItem.url.c_str(), -1, SQLITE_STATIC);
+    	sqlite3_bind_int(stmt, 3, id);
 
 		if (sqlite3_step(stmt) != SQLITE_DONE) {
 			std::cerr << "Error updating SERVICE" << sqlite3_errmsg(bd) << std::endl;
 			if (stmt) sqlite3_finalize(stmt);
-			return {-1, ""};
+			return {-1, "Could not update service", ""};
 		}
 
     	sqlite3_finalize(stmt);

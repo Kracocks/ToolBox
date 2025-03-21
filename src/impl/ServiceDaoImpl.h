@@ -22,7 +22,6 @@ namespace impl {
         std::vector<model::Service> findAll() override;
         std::vector<model::Service> findByName(std::string &&name);
         std::vector<model::Service> findByName(const std::string &name);
-    	void addLogin(const int &service_id, const model::Identifiant<> &item);
         model::Service insert(model::Service &item) override;
     	model::Service update(const int &id, const model::Service &newItem) override;
         void remove(const model::Service &item) override;
