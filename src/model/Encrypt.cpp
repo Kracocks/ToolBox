@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 
 bool model::Encrypt::generateKeyPair() {
-    const std::string privateKeyPath = "/etc/ToolBox/keys/private_key.pem";
+    const std::string privateKeyPath = std::string(getenv("HOME")) + "/.ToolBox/keys/private_key.pem";
     const std::string publicKeyPath = "./data/public_key.pem";
 
     if (std::filesystem::exists(privateKeyPath)) {
@@ -54,7 +54,7 @@ bool model::Encrypt::generateKeyPair() {
         return true;
     }
 
-    std::filesystem::create_directories("/etc/ToolBox/keys/");
+    std::filesystem::create_directories(std::string(getenv("HOME")) + "/.ToolBox/keys/");
 
     EVP_PKEY *pkey = nullptr;
     EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr);
@@ -172,7 +172,7 @@ bool model::Encrypt::encrypt(const std::string &input, std::string *output) {
 }
 
 bool model::Encrypt::decrypt(const std::string &input, std::string *output) {
-    FILE *f = fopen("/etc/myapp/keys/private_key.pem", "r");
+    FILE *f = fopen((std::string(getenv("HOME")) + "/.ToolBox/keys/private_key.pem").c_str(), "r");
     if (!f) {
         std::cerr << "Error : Can't open private key\n";
         return false;

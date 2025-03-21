@@ -3,7 +3,9 @@ project(SystemManager)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp
+        src/controller/Controller.cpp
+        src/controller/Controller.h)
 
 add_subdirectory(src)
 add_subdirectory(tests)
