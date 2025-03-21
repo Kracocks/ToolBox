@@ -12,15 +12,14 @@
 #include "Token.h"
 
 namespace model {
-	template <typename Int=int, typename Str=std::string, typename T=Token>
+	template <typename Int=int, typename Str=std::string>
     requires std::same_as<Int, int> &&
-    		 std::same_as<Str, std::string> &&
-    		 std::same_as<T, Token>
+    		 std::same_as<Str, std::string>
     class Identifiant {
         Int m_id;
         Str m_email;
         Str m_password;
-		std::vector<T> m_tokens;
+		Int m_service_id;
 
     public:
         Identifiant() = delete;
@@ -30,12 +29,13 @@ namespace model {
          * @param id ID of the login
          * @param email Email of the login
          * @param password password of the login
+         * @param service_id id of the service associated to the login
          */
-        Identifiant(Int &&id, Str &&email, Str &&password)
-            : m_id(std::forward<Int>(id)),
-              m_email(std::forward<Str>(email)),
-              m_password(std::forward<Str>(password)),
-			  m_tokens({}) {
+        Identifiant(Int &&id, Str &&email, Str &&password, Int &&service_id)
+            : m_id(id),
+              m_email(email),
+              m_password(password),
+			  m_service_id(service_id) {
         }
 
         /**
@@ -57,10 +57,12 @@ namespace model {
         [[nodiscard]] Str getPassword() const {return m_password;}
 
 		/**
-		 * Get the Tokens associated to the login
-		 * @return Tokens associated to the login
+		 * Get the service id associated to the login
+		 * @return Service id associated to the login
 		 */
-		[[nodiscard]] std::vector<T> getTokens() const {return m_tokens;}
+		int getServiceId() {
+        	return m_service_id;
+        }
 
         /**
          * Set the ID of the login
@@ -74,42 +76,17 @@ namespace model {
          */
         void setEmail(const Str &&email) {m_email = std::move(email);}
 
-		/**
-		 * Set the email of the login
-		 * @param email New email of the login
-		 */
-		void setEmail(const Str &email) {m_email = std::move(email);}
-
         /**
          * Set the password of the login
          * @param password New password of the login
          */
-        void setPassword(const Str &&password) {m_password = std::move(password);}
+        void setPassword(const Str &&password) {m_password = std::move(password); }
 
 		/**
-		 * Add a new token to the login
-		 * @param token New token group to associate to the login
+		 * Change the service associated to the login
+		 * @param service_id New service associated to the login
 		 */
-		void addTokenGroup(const T &&token) {m_tokens.push_back(token); }
-
-		/**
-		 * Remove a token associated to the login
-		 * @param token Token associated to the login
-		 */
-		void removeTokenGroup(const T &&token) {
-	        T it = std::find(m_tokens.begin(), m_tokens.end(), token);
-        	if (it != m_tokens.end()) {
-        		m_tokens.erase(it);
-        	}
-        }
-
-    	void display() const {
-	        std::cout << "Email : " <<  m_email << "\tPassword : " << m_password << "\n";
-        	for (const T &token : m_tokens) {
-        		std::cout << "\t";
-        		token.display();
-        	}
-        }
+		void setServiceId(const Int &service_id) {m_service_id = service_id;}
 
         /**
          * Compare two logins
@@ -117,9 +94,9 @@ namespace model {
          * @return True if the two objects are the same
          */
         bool operator==(const Identifiant &other) const {
-            return m_email == other.m_email && m_password == other.m_password && m_tokens == other.m_tokens;
-        }
-    };
+			return m_email == other.m_email && m_password == other.m_password;
+		}
+	};
 
 } // model
 
