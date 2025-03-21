@@ -19,6 +19,7 @@ namespace impl {
 
     	model::Token find(const int & id) override;
         std::vector<model::Token> findAll() override;
+    	std::vector<model::Token> findByLogin(const int &login_id);
         model::Token insert(model::Token &item) override;
     	model::Token update(const int& id, const model::Token &newItem) override;
         void remove(const model::Token &item) override;

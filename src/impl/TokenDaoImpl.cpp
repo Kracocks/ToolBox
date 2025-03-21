@@ -63,6 +63,34 @@ namespace impl {
         return tokens;
     }
 
+	std::vector<model::Token> TokenDaoImpl::findByLogin(const int &login_id) {
+	    std::vector<model::Token> tokens;
+    	sqlite3 *bd = m_connector.getDB();
+    	const std::string sql = "SELECT token_id, login_id, value, description, expired_at FROM TOKEN where login_id = ?;";
+    	sqlite3_stmt *stmt;
+
+    	int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
+    	if (status != SQLITE_OK) {
+    		std::cerr << "Error preparing statement to get all TOKEN" << std::endl;
+    		return tokens;
+    	}
+    	sqlite3_bind_int(stmt, 1, login_id);
+
+    	while (sqlite3_step(stmt) == SQLITE_ROW) {
+    		model::Token token{
+    			sqlite3_column_int(stmt, 0),
+				sqlite3_column_int(stmt, 1),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)),
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))};
+    		tokens.push_back(token);
+    	}
+
+    	sqlite3_finalize(stmt);
+
+    	return tokens;
+    }
+
     model::Token TokenDaoImpl::insert(model::Token &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "INSERT INTO TOKEN(token_id, login_id, value, description, expired_at) values (?, ?, ?, ?, ?);";
