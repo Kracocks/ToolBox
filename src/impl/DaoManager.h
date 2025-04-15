@@ -11,12 +11,19 @@
 
 namespace impl {
 
-class DaoManager {
-	private:
-		ServiceDaoImpl services;
-		IdentifiantDaoImpl logins;
-		TokenDaoImpl tokens;
-};
+	class DaoManager {
+		ServiceDaoImpl m_services;
+		IdentifiantDaoImpl m_logins;
+		TokenDaoImpl m_tokens;
+
+		public:
+			DaoManager() = default;
+			~DaoManager() = default;
+
+			ServiceDaoImpl& getServices();
+			IdentifiantDaoImpl& getLogins();
+			TokenDaoImpl& getTokens();
+	};
 
 } // impl
 

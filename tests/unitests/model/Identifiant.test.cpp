@@ -46,7 +46,7 @@ TEST_CASE("Test the setters of Identifiant", "[identifiant]") {
 
     const std::string email {"test2@email.com"};
     const std::string password {"12345678"};
-    ident.setEmail(email);
+	ident.setEmail(email.data());
     REQUIRE(ident.getEmail() == "test2@email.com");
     ident.setPassword(password.data());
     REQUIRE(ident.getPassword() == "12345678");

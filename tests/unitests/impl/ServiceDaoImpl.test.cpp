@@ -5,17 +5,20 @@
 #include <catch2/catch_all.hpp>
 
 #include "ServiceDaoImpl.h"
-#include "impl/IdentifiantDaoImpl.h"
 
 TEST_CASE("Test the DAO of ServiceDaoImpl", "[servicedaoimpl]") {
 	impl::ServiceDaoImpl serviceDao {};
 
 	std::vector all_before_insert {serviceDao.findAll()};
 
-	model::Service service {0, "//service1"};
-	serviceDao.insert(service);
-	serviceDao.insert(model::Service {0, "//service2"});
-	serviceDao.insert(model::Service {0, "/:service3"});
+	{
+		model::Service service1 {0, "//service1"};
+		model::Service service2 {0, "//service2"};
+		model::Service service3 {0, "/:service3"};
+		serviceDao.insert(service1);
+		serviceDao.insert(service2);
+		serviceDao.insert(service3);
+	}
 
 	std::vector all_after_insert {serviceDao.findAll()};
 
