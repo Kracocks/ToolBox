@@ -8,7 +8,7 @@
 #include <ostream>
 
 namespace impl {
-    IdentifiantDaoImpl::IdentifiantDaoImpl(): m_connector(bd::Connector::getInstance()) {}
+	IdentifiantDaoImpl::IdentifiantDaoImpl(): m_connector(bd::Connector::getInstance("")) {}
 
 	model::Identifiant<> IdentifiantDaoImpl::find(const int& id) {
 	    model::Identifiant<> ident {-1, "", "", -1};

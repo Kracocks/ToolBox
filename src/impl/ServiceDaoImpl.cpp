@@ -8,7 +8,7 @@
 #include <memory>
 
 namespace impl {
-    ServiceDaoImpl::ServiceDaoImpl(): m_connector(bd::Connector::getInstance()) {}
+	ServiceDaoImpl::ServiceDaoImpl(): m_connector(bd::Connector::getInstance("")) {}
 
 	model::Service ServiceDaoImpl::find(const int &id) {
     	model::Service service {-1, "Could not find service", ""};

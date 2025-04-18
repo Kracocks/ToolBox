@@ -20,7 +20,7 @@ namespace bd {
         void operator=(const Connector &) = delete;
 
         ~Connector();
-        static Connector &getInstance();
+		static Connector &getInstance(const std::string& password);
         [[nodiscard]] sqlite3 *getDB() const;
     };
 

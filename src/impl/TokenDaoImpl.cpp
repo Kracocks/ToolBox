@@ -7,7 +7,7 @@
 #include <iostream>
 
 namespace impl {
-    TokenDaoImpl::TokenDaoImpl(): m_connector(bd::Connector::getInstance()) {}
+	TokenDaoImpl::TokenDaoImpl(): m_connector(bd::Connector::getInstance("")) {}
 
 	model::Token TokenDaoImpl::find(const int &id) {
 		model::Token token {-1, -1, "", "Could not get token with id "+id, ""};

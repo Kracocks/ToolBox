@@ -27,7 +27,7 @@
      <string>a</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="nameText">
+   <widget class="QLineEdit" name="nameTf">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -61,19 +61,6 @@
     </property>
     <property name="text">
      <string/>
-    </property>
-   </widget>
-   <widget class="QCommandLinkButton" name="commandLinkButton">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>420</y>
-      <width>316</width>
-      <height>49</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>test</string>
     </property>
    </widget>
   </widget>

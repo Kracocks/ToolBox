@@ -9,12 +9,13 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui)
+add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
+    connection.h connection.cpp connection.ui)
 
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-                                     ${CMAKE_CURRENT_BINARY_DIR})
+                                     ${CMAKE_CURRENT_BINARY_DIR}/UI_autogen/include)
 
 message(STATUS "UI binary dir: ${CMAKE_CURRENT_BINARY_DIR}")
 
 
-target_link_libraries(UI PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(UI PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets bd)

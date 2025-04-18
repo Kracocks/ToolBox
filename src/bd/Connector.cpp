@@ -48,6 +48,8 @@ namespace bd {
     		if (res != SQLITE_OK) {
     			std::cerr << "Error when executing SQL file : " << err_msg << std::endl;
     			sqlite3_free(err_msg);
+				m_bd = nullptr;
+				return;
     		}
     	} else {
     		std::cerr << "Cannot load creation.sql file" << std::endl;
@@ -64,15 +66,15 @@ namespace bd {
             delete m_connector;
             m_connector = nullptr;
         }
-    }
+	}
 
     sqlite3 *Connector::getDB() const {
         return m_bd;
     }
 
-    Connector &Connector::getInstance() {
-        if (m_connector == nullptr)
-            m_connector = new Connector("data/passwords.sqlite", std::getenv("DB_KEY"));
+	Connector &Connector::getInstance(const std::string& password) {
+		if (m_connector == nullptr)
+			m_connector = new Connector("data/passwords.sqlite", password);
         return *m_connector;
     }
 } // bd

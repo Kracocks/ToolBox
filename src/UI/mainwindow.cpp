@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "UI_autogen/include/ui_mainwindow.h"
+#include "ui_mainwindow.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -11,6 +11,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::changeName() {
-	ui->nameLabel->setText(ui->nameText->text());
-	qDebug() << "Changing name";
+	qDebug() << "Changing name to " << ui->nameTf->text();
+	ui->nameLabel->setText(ui->nameTf->text());
 }
