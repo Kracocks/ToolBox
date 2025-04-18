@@ -17,6 +17,7 @@ public:
 
 private:
 	void login();
+	void viewPwd();
 	int attempt;
 	MainWindow *mainwindow;
 	Ui::Connection *ui;

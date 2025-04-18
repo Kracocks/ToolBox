@@ -11,6 +11,7 @@ Connection::Connection(QWidget *parent) : QWidget(parent), ui(new Ui::Connection
 	ui->setupUi(this);
 	mainwindow = new MainWindow();
 	connect(ui->loginBtn, &QPushButton::clicked, this, &Connection::login);
+	connect(ui->viewPwd, &QCheckBox::stateChanged, this, &Connection::viewPwd);
 }
 
 Connection::~Connection() { delete ui; }
@@ -47,5 +48,13 @@ void Connection::login() {
 		ui->passwordTf->clear();
 		ui->passwordTf->setEnabled(true);
 		ui->informationLabel->setText("wrong password\nattempts left : " + QString::number(attempt));
+	}
+}
+
+void Connection::viewPwd() {
+	if (ui->viewPwd->isChecked()) {
+		ui->passwordTf->setEchoMode(QLineEdit::Normal);
+	} else {
+		ui->passwordTf->setEchoMode(QLineEdit::Password);
 	}
 }
