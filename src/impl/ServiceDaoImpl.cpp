@@ -117,8 +117,12 @@ namespace impl {
         const std::string sql = "INSERT INTO SERVICE(service_id, name, url) values (?, ?, ?);";
         sqlite3_stmt *stmt;
 
+		// if the id of the returned item is -1 this mean an error has occured
+		item.id = -1;
+
         if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-			std::cerr << "Error preparing statement to insert SERVICE" << std::endl;
+			std::cerr << "Error preparing statement to insert SERVICE" << sqlite3_errmsg(bd) << std::endl;
+			item.name = sqlite3_errmsg(bd);
 			sqlite3_finalize(stmt);
 			return item;
 		}
@@ -128,7 +132,8 @@ namespace impl {
     	sqlite3_bind_text(stmt, 3, item.url.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
-    		std::cerr << "Error inserting SERVICE" << std::endl;
+			std::cerr << "Error inserting SERVICE" << sqlite3_errmsg(bd) << std::endl;
+			item.name = sqlite3_errmsg(bd);
     		sqlite3_finalize(stmt);
     		return item;
     	}

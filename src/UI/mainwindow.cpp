@@ -1,16 +1,27 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "../impl/ServiceDaoImpl.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	connect(ui->checkNameBtn, &QPushButton::clicked, this, &MainWindow::changeName);
+	addService = new AddService();
+	connect(addService, &AddService::accepted, this, &MainWindow::reload);
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::changeName() {
-	qDebug() << "Changing name to " << ui->nameTf->text();
-	ui->nameLabel->setText(ui->nameTf->text());
+void MainWindow::on_addServiceBtn_clicked()
+{
+	qDebug() << "open dialog to add service";
+	addService->open();
+}
+
+void MainWindow::reload() {
+	impl::ServiceDaoImpl services {};
+	ui->servicesLV->clear();
+	for (model::Service service : services.findAll()) {
+		ui->servicesLV->addItem(QString::fromStdString(service.name));
+	}
 }
