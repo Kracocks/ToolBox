@@ -53,7 +53,7 @@
      <string>Add service</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="servicesLV">
+   <widget class="QTableWidget" name="servicesTable">
     <property name="geometry">
      <rect>
       <x>0</x>

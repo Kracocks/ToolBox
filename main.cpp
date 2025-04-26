@@ -2,9 +2,7 @@
 #include <QApplication>
 
 #include "connection.h"
-#include "src/impl/ServiceDaoImpl.h"
 #include "src/model/Encrypt.h"
-#include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
 	if (!model::Encrypt::generateKeyPair()) {
@@ -15,7 +13,6 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 	QWidget widget;
 
-	MainWindow mw;
 	Connection ui;
 	ui.show();
 

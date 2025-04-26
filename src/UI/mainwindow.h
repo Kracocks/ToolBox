@@ -22,6 +22,7 @@ private slots:
 
 private:
 	AddService *addService;
+	void on_deleteServiceBtn_clicked();
 	Ui::MainWindow *ui;
 };
 
