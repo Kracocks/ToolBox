@@ -45,7 +45,7 @@ void LoginsWindow::reload() {
 		connect(deleteBtn, &QPushButton::clicked, this, &LoginsWindow::on_deleteLoginBtn_clicked);
 
 		// set elements
-		ui->loginsTable->setItem(row, 0, new QTableWidgetItem(all[row].getId()));
+		ui->loginsTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].getId())));
 		ui->loginsTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].getEmail())));
 		ui->loginsTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].getPassword())));
 		ui->loginsTable->setCellWidget(row, 3, deleteBtn);
