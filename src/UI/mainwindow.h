@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include "addservice.h"
+#include "loginswindow.h"
 
 namespace Ui {
 	class MainWindow;
@@ -22,7 +23,9 @@ private slots:
 
 private:
 	AddService *addService;
+	LoginsWindow *loginsWindow;
 	void on_deleteServiceBtn_clicked();
+	void on_row_doubleClicked();
 	Ui::MainWindow *ui;
 };
 

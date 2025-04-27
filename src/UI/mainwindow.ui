@@ -40,19 +40,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="addServiceBtn">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>500</y>
-      <width>169</width>
-      <height>49</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add service</string>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="servicesTable">
     <property name="geometry">
      <rect>
@@ -61,6 +48,19 @@
       <width>801</width>
       <height>361</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addServiceBtn">
+    <property name="geometry">
+     <rect>
+      <x>619</x>
+      <y>500</y>
+      <width>171</width>
+      <height>49</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add service</string>
     </property>
    </widget>
   </widget>
