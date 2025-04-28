@@ -11,7 +11,9 @@ add_library(model STATIC
         Token.h
         Encrypt.cpp
         Encrypt.h
-        Utils.h)
+        Utils.h
+        Login.cpp
+        Login.h)
 
 find_package(OpenSSL REQUIRED)
 

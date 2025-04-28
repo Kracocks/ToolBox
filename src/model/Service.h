@@ -5,9 +5,6 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 #include <string>
-#include <vector>
-
-#include "Identifiant.h"
 
 namespace model {
 	struct Service {

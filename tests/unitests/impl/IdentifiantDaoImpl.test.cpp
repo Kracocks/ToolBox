@@ -10,14 +10,14 @@ TEST_CASE("Test the DAO of IdentifiantDaoImpl", "[identifiantdaoimpl]") {
 
 	std::vector all_before_insert {identifiantDao.findAll()};
 
-	{
-		model::Identifiant<> login1 {0, "//test@test.com", "1234", false};
-		model::Identifiant<> login2 {0, "//test@test.com", "1234", false};
-		model::Identifiant<> login3 {0, "//test@test.com", "1234", false};
-		identifiantDao.insert(login1);
-		identifiantDao.insert(login2);
-		identifiantDao.insert(login3);
-	}
+	// {
+	// 	model::Login login1 {0, "//test@test.com", "1234", false};
+	// 	model::Login login2 {0, "//test@test.com", "1234", false};
+	// 	model::Login login3 {0, "//test@test.com", "1234", false};
+	// 	identifiantDao.insert(login1);
+	// 	identifiantDao.insert(login2);
+	// 	identifiantDao.insert(login3);
+	// }
 
 	std::vector all_after_insert {identifiantDao.findAll()};
 

@@ -1,6 +1,7 @@
 #include "loginswindow.h"
 #include "ui_loginswindow.h"
 #include "../impl/IdentifiantDaoImpl.h"
+#include "../model/Encrypt.h"
 #include <QDebug>
 
 LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(parent), ui(new Ui::LoginsWindow), m_service(service)
@@ -28,8 +29,8 @@ void LoginsWindow::on_deleteLoginBtn_clicked() {
 	if (w) {
 		impl::IdentifiantDaoImpl logins {};
 		int id = w->property("idLogin").toInt();
-		model::Identifiant<> login = logins.find(id);
-		qDebug() << login.getId() << QString::fromStdString(login.getPassword()) << QString::fromStdString(login.getPassword());
+		model::Login login = logins.find(id);
+		qDebug() << login.id << QString::fromStdString(login.password) << QString::fromStdString(login.password);
 		logins.remove(logins.find(id));
 		reload();
 	}
@@ -38,7 +39,7 @@ void LoginsWindow::on_deleteLoginBtn_clicked() {
 void LoginsWindow::reload() {
 	// get logins
 	impl::IdentifiantDaoImpl logins {};
-	std::vector<model::Identifiant<>> all = logins.findByService(m_service.id);
+	std::vector<model::Login> all = logins.findByService(m_service.id);
 	// setting table
 	ui->loginsTable->setRowCount(all.size());
 	ui->loginsTable->clearContents();
@@ -51,13 +52,17 @@ void LoginsWindow::reload() {
 	for (int row = 0; row < all.size(); ++row) {
 		// set delete button
 		QPushButton *deleteBtn = new QPushButton("Delete");
-		deleteBtn->setProperty("idLogin", all[row].getId());
+		deleteBtn->setProperty("idLogin", all[row].id);
 		connect(deleteBtn, &QPushButton::clicked, this, &LoginsWindow::on_deleteLoginBtn_clicked);
 
 		// set elements
-		ui->loginsTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].getId())));
-		ui->loginsTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].getEmail())));
-		ui->loginsTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].getPassword())));
+		ui->loginsTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].id)));
+		ui->loginsTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].email)));
+		std::string decrypted_password {};
+		if (!model::Encrypt::decrypt(all[row].password, &decrypted_password)) {
+			qDebug() << "problem while decrypting";
+		}
+		ui->loginsTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(decrypted_password)));
 		ui->loginsTable->setCellWidget(row, 3, deleteBtn);
 	}
 }

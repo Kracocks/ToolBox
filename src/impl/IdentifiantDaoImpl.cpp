@@ -3,6 +3,7 @@
 //
 
 #include "IdentifiantDaoImpl.h"
+#include "../model/Login.h"
 #include "../model/Service.h"
 #include <iostream>
 #include <ostream>
@@ -10,8 +11,8 @@
 namespace impl {
 	IdentifiantDaoImpl::IdentifiantDaoImpl(): m_connector(bd::Connector::getInstance("")) {}
 
-	model::Identifiant<> IdentifiantDaoImpl::find(const int& id) {
-	    model::Identifiant<> ident {-1, "", "", -1};
+	model::Login IdentifiantDaoImpl::find(const int& id) {
+		model::Login ident {-1, -1, "", ""};
     	sqlite3 *bd = m_connector.getDB();
 		const std::string sql {"SELECT * from LOGIN where login_id = ?;"};
     	sqlite3_stmt *stmt = nullptr;
@@ -23,10 +24,10 @@ namespace impl {
 
     	sqlite3_bind_int(stmt, 1, id);
     	if (sqlite3_step(stmt) == SQLITE_ROW) {
-    		ident.setID(sqlite3_column_int(stmt, 0));
-    		ident.setEmail(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)));
-    		ident.setPassword(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
-    		ident.setServiceId(sqlite3_column_int(stmt, 3));
+			ident.id = sqlite3_column_int(stmt, 0);
+			ident.email = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+			ident.password = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+			ident.service_id = sqlite3_column_int(stmt, 3);
     		sqlite3_finalize(stmt);
     		return ident;
     	}
@@ -36,8 +37,8 @@ namespace impl {
     	return ident;
     }
 
-    std::vector<model::Identifiant<>> IdentifiantDaoImpl::findAll() {
-        std::vector<model::Identifiant<>> identifiants;
+	std::vector<model::Login> IdentifiantDaoImpl::findAll() {
+		std::vector<model::Login> logins;
     	std::vector<model::Service> services;
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "SELECT login_id, email, password, service_id "
@@ -48,24 +49,24 @@ namespace impl {
         if (status != SQLITE_OK) {
             std::cerr << "Error preparing statement to get all LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
         	if (stmt) sqlite3_finalize(stmt);
-            return identifiants;
+			return logins;
         }
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            model::Identifiant<> identifiant = model::Identifiant<>(
+			model::Login login = model::Login(
             	sqlite3_column_int(stmt, 0),
+				sqlite3_column_int(stmt, 3),
             	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-            	sqlite3_column_int(stmt, 3));
-        	identifiants.push_back(identifiant);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
+			logins.push_back(login);
         }
 
         sqlite3_finalize(stmt);
-        return identifiants;
+		return logins;
     }
 
-    std::vector<model::Identifiant<>> IdentifiantDaoImpl::findByEmail(std::string &&email) {
-        std::vector<model::Identifiant<>> identifiants;
+	std::vector<model::Login> IdentifiantDaoImpl::findByEmail(std::string &&email) {
+		std::vector<model::Login> logins;
         sqlite3 *bd = m_connector.getDB();
     	const std::string sql = "SELECT login_id, email, password, service_id "
 								"FROM LOGIN "
@@ -76,25 +77,25 @@ namespace impl {
         if (status != SQLITE_OK) {
             std::cerr << "Error preparing statement to get all LOGIN by email : \n" << sqlite3_errmsg(bd) << std::endl;
         	if (stmt) sqlite3_finalize(stmt);
-            return identifiants;
+			return logins;
         }
     	sqlite3_bind_text(stmt, 1, (email + '%').c_str(), -1, SQLITE_TRANSIENT);
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            model::Identifiant<> identifiant = model::Identifiant<>(
+			model::Login login = model::Login(
 				sqlite3_column_int(stmt, 0),
+				sqlite3_column_int(stmt, 3),
             	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-            	reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-            	sqlite3_column_int(stmt, 3));
-        	identifiants.push_back(identifiant);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
+			logins.push_back(login);
         }
 
         sqlite3_finalize(stmt);
-        return identifiants;
+		return logins;
     }
 
-    std::vector<model::Identifiant<>> IdentifiantDaoImpl::findByEmail(const std::string &email) {
-        std::vector<model::Identifiant<>> identifiants;
+	std::vector<model::Login> IdentifiantDaoImpl::findByEmail(const std::string &email) {
+		std::vector<model::Login> logins;
         sqlite3 *bd = m_connector.getDB();
     	const std::string sql = "SELECT login_id, email, password, service_id "
 								"FROM LOGIN "
@@ -105,25 +106,25 @@ namespace impl {
         if (status != SQLITE_OK) {
             std::cerr << "Error preparing statement to get all LOGIN by email : \n" << sqlite3_errmsg(bd) << std::endl;
         	if (stmt) sqlite3_finalize(stmt);
-            return identifiants;
+			return logins;
         }
     	sqlite3_bind_text(stmt, 1, (email + '%').c_str(), -1, SQLITE_TRANSIENT);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-    		model::Identifiant<> identifiant = model::Identifiant<>(
+			model::Login login = model::Login(
 				sqlite3_column_int(stmt, 0),
+				sqlite3_column_int(stmt, 3),
 				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-				sqlite3_column_int(stmt, 3));
-    		identifiants.push_back(identifiant);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
+			logins.push_back(login);
     	}
 
         sqlite3_finalize(stmt);
-        return identifiants;
+		return logins;
     }
 
-	std::vector<model::Identifiant<>> IdentifiantDaoImpl::findByService(const int &service_id) {
-	    std::vector<model::Identifiant<>> identifiants;
+	std::vector<model::Login> IdentifiantDaoImpl::findByService(const int &service_id) {
+		std::vector<model::Login> logins;
     	sqlite3 *bd = m_connector.getDB();
     	const std::string sql = "SELECT login_id, email, password, service_id "
     							"FROM SERVICE natural join LOGIN "
@@ -133,39 +134,39 @@ namespace impl {
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to get all LOGIN by service with id " << service_id << " : \n" << sqlite3_errmsg(bd) << std::endl;
     		if (stmt) sqlite3_finalize(stmt);
-    		return identifiants;
+			return logins;
     	}
     	sqlite3_bind_int(stmt, 1, service_id);
 
     	while (sqlite3_step(stmt) == SQLITE_ROW) {
-			model::Identifiant<> identifiant = model::Identifiant<>(
+			model::Login login = model::Login(
 				sqlite3_column_int(stmt, 0),
+				sqlite3_column_int(stmt, 3),
 				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)),
-				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)),
-				sqlite3_column_int(stmt, 3));
-    		identifiants.push_back(identifiant);
+				reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
+			logins.push_back(login);
     	}
-    	return identifiants;
+		return logins;
     }
 
-    model::Identifiant<> IdentifiantDaoImpl::insert(model::Identifiant<> &item) {
+	model::Login IdentifiantDaoImpl::insert(model::Login &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password, service_id) values (?, ?, ?, ?);";
         sqlite3_stmt *stmt_login = nullptr;
 
-		item.setID(-1);
+		item.id = -1;
 
         if (sqlite3_prepare_v2(bd, sql_log.c_str(), -1, &stmt_login, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
-			item.setEmail(sqlite3_errmsg(bd));
+			item.email = sqlite3_errmsg(bd);
         	if (stmt_login) sqlite3_finalize(stmt_login);
         	return item;
         }
 		const int id = getLastId();
 		sqlite3_bind_int(stmt_login, 1, id);
-    	sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
-    	sqlite3_bind_text(stmt_login, 3, item.getPassword().c_str(), -1, SQLITE_TRANSIENT);
-    	sqlite3_bind_int(stmt_login, 4, item.getServiceId());
+		sqlite3_bind_text(stmt_login, 2, item.email.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text(stmt_login, 3, item.password.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(stmt_login, 4, item.service_id);
 
     	if (sqlite3_step(stmt_login) != SQLITE_DONE) {
     		std::cerr << "Error insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
@@ -173,13 +174,13 @@ namespace impl {
     		return item;
     	}
 
-		item.setID(id);
+		item.id = id;
     	sqlite3_finalize(stmt_login);
     	std::cout << "inserted LOGIN" << std::endl;
     	return item;
     }
 
-	model::Identifiant<> IdentifiantDaoImpl::update(const int &id, const model::Identifiant<> &newItem) {
+	model::Login IdentifiantDaoImpl::update(const int &id, const model::Login &newItem) {
 		sqlite3 *bd = m_connector.getDB();
     	const std::string sql = {"UPDATE LOGIN SET email = ?, password = ? where login_id = ?;"};
     	sqlite3_stmt *stmt;
@@ -187,22 +188,22 @@ namespace impl {
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to update LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", -1};
+			return {-1, -1, "", ""};
     	}
     	sqlite3_bind_int(stmt, 1, getLastId());
-    	sqlite3_bind_text(stmt, 2, newItem.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text(stmt, 2, newItem.password.c_str(), -1, SQLITE_TRANSIENT);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error updating LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", -1};
+			return {-1, -1, "", ""};
     	}
 
     	sqlite3_finalize(stmt);
-    	return {-1, "", "", -1};
+		return {-1, -1, "", ""};
     }
 
-    void IdentifiantDaoImpl::remove(const model::Identifiant<> &item) {
+	void IdentifiantDaoImpl::remove(const model::Login &item) {
         sqlite3 *bd = m_connector.getDB();
         const std::string sql = "DELETE FROM LOGIN where login_id = ?";
         sqlite3_stmt *stmt = nullptr;
@@ -212,7 +213,7 @@ namespace impl {
         	if (stmt) sqlite3_finalize(stmt);
         	return;
         }
-    	sqlite3_bind_int(stmt, 1, item.getId());
+		sqlite3_bind_int(stmt, 1, item.id);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error delete LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;

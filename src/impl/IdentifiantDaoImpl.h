@@ -7,11 +7,11 @@
 #include <vector>
 #include "../bd/Connector.h"
 #include "../bd/IGenericDao.h"
-#include "../model/Identifiant.h"
+#include "../model/Login.h"
 
 namespace impl {
 
-    class IdentifiantDaoImpl : public bd::IGenericDAO<model::Identifiant<>> {
+	class IdentifiantDaoImpl : public bd::IGenericDAO<model::Login> {
         bd::Connector &m_connector;
 
     public:
@@ -19,14 +19,14 @@ namespace impl {
 
         ~IdentifiantDaoImpl() override = default;
 
-    	model::Identifiant<> find(const int &id) override;
-        std::vector<model::Identifiant<>> findAll() override;
-        std::vector<model::Identifiant<>> findByEmail(std::string &&email);
-        std::vector<model::Identifiant<>> findByEmail(const std::string &email);
-    	std::vector<model::Identifiant<>> findByService(const int &service_id);
-        model::Identifiant<> insert(model::Identifiant<> &item) override;
-    	model::Identifiant<> update(const int &id, const model::Identifiant<> &newItem) override;
-        void remove(const model::Identifiant<> &item) override;
+		model::Login find(const int &id) override;
+		std::vector<model::Login> findAll() override;
+		std::vector<model::Login> findByEmail(std::string &&email);
+		std::vector<model::Login> findByEmail(const std::string &email);
+		std::vector<model::Login> findByService(const int &service_id);
+		model::Login insert(model::Login &item) override;
+		model::Login update(const int &id, const model::Login &newItem) override;
+		void remove(const model::Login &item) override;
     	[[nodiscard]] int getLastId() const;
     };
 

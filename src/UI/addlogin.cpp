@@ -1,7 +1,8 @@
 #include "addlogin.h"
 #include "ui_addlogin.h"
 #include "../impl/IdentifiantDaoImpl.h"
-#include "../model/Identifiant.h"
+#include "../model/Login.h"
+#include "../model/Encrypt.h"
 #include <QDebug>
 #include <QMessageBox>
 
@@ -31,11 +32,22 @@ void AddLogin::accept() {
 		return;
 	}
 	impl::IdentifiantDaoImpl logins {};
-	model::Identifiant<> login {0, ui->emailTf->text().toStdString(), ui->pwdTf->text().toStdString(), m_serviceId};
-	logins.insert(login);
-	if (login.getId() == -1) {
-		QMessageBox::warning(this, "Error adding login", QString::fromStdString(login.getEmail()));
+	qDebug() << "here1";
+	const std::string password = ui->pwdTf->text().toStdString();
+	std::string encryptedPassword {};
+	if (model::Encrypt::encrypt(password, &encryptedPassword)) {
+		qDebug() << "here3";
+		model::Login login {0, m_serviceId, ui->emailTf->text().toStdString(), encryptedPassword};
+		qDebug() << "here4";
+		logins.insert(login);
+		if (login.id == -1) {
+			QMessageBox::warning(this, "Error adding login", QString::fromStdString(login.email));
+			return;
+		}
+		QDialog::accept();
+		return;
+	} else {
+		QMessageBox::warning(this, "Error adding login", "Error while encrypting the password");
 		return;
 	}
-	QDialog::accept();
 }
