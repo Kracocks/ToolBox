@@ -7,9 +7,6 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
-#include <vector>
-
-#include "Token.h"
 
 namespace model {
 	template <typename Int=int, typename Str=std::string>
@@ -31,7 +28,7 @@ namespace model {
          * @param password password of the login
          * @param service_id id of the service associated to the login
          */
-        Identifiant(Int &&id, Str &&email, Str &&password, Int &&service_id)
+		Identifiant(Int &&id, Str &&email, Str &&password, int service_id)
             : m_id(id),
               m_email(email),
               m_password(password),
@@ -68,7 +65,7 @@ namespace model {
          * Set the ID of the login
          * @param id New ID of the login
          */
-        void setID(const Int &&id) {m_id = std::move(id);}
+		void setID(const int id) {m_id = std::move(id);}
 
         /**
          * Set the email of the login

@@ -3,12 +3,22 @@
 #include "../impl/IdentifiantDaoImpl.h"
 #include <QDebug>
 
-LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(parent), ui(new Ui::LoginsWindow)
+LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(parent), ui(new Ui::LoginsWindow), m_service(service)
 {
 	ui->setupUi(this);
-	m_service = service;
 	reload();
 	ui->title->setText("Logins from " + QString::fromStdString(service.name));
+
+	// Setup the table
+	ui->loginsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui->loginsTable->setSelectionMode(QAbstractItemView::SingleSelection);
+
+	addLogin = new AddLogin(m_service.id);
+	// When service added, reload the table
+	connect(addLogin, &AddLogin::accepted, this, &LoginsWindow::reload);
+
+	// Interaction when double clicking a row
+	// connect(ui->servicesTable, &QTableWidget::itemDoubleClicked, this, &MainWindow::on_row_doubleClicked);
 }
 
 LoginsWindow::~LoginsWindow() { delete ui; }
@@ -51,3 +61,10 @@ void LoginsWindow::reload() {
 		ui->loginsTable->setCellWidget(row, 3, deleteBtn);
 	}
 }
+
+void LoginsWindow::on_addLoginBtn_clicked()
+{
+	qDebug() << "open dialog to add login";
+	addLogin->open();
+}
+

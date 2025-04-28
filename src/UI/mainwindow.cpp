@@ -31,7 +31,6 @@ void MainWindow::on_row_doubleClicked() {
 	int row = ui->servicesTable->currentRow();
 	impl::ServiceDaoImpl services {};
 
-	int serviceId = ui->servicesTable->model()->index(row, 0).data().toInt();
 	model::Service service = services.find(ui->servicesTable->item(row, 0)->data(Qt::DisplayRole).toInt());
 	loginsWindow = new LoginsWindow(service);
 	loginsWindow->show();

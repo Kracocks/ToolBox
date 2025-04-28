@@ -153,12 +153,16 @@ namespace impl {
         const std::string sql_log = "INSERT INTO LOGIN(login_id, email, password, service_id) values (?, ?, ?, ?);";
         sqlite3_stmt *stmt_login = nullptr;
 
+		item.setID(-1);
+
         if (sqlite3_prepare_v2(bd, sql_log.c_str(), -1, &stmt_login, nullptr) != SQLITE_OK) {
         	std::cerr << "Error preparing statement to insert LOGIN : \n" << sqlite3_errmsg(bd) << std::endl;
+			item.setEmail(sqlite3_errmsg(bd));
         	if (stmt_login) sqlite3_finalize(stmt_login);
         	return item;
         }
-    	sqlite3_bind_int(stmt_login, 1, getLastId());
+		const int id = getLastId();
+		sqlite3_bind_int(stmt_login, 1, id);
     	sqlite3_bind_text(stmt_login, 2, item.getEmail().c_str(), -1, SQLITE_TRANSIENT);
     	sqlite3_bind_text(stmt_login, 3, item.getPassword().c_str(), -1, SQLITE_TRANSIENT);
     	sqlite3_bind_int(stmt_login, 4, item.getServiceId());
@@ -169,6 +173,7 @@ namespace impl {
     		return item;
     	}
 
+		item.setID(id);
     	sqlite3_finalize(stmt_login);
     	std::cout << "inserted LOGIN" << std::endl;
     	return item;

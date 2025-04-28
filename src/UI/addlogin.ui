@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddService</class>
- <widget class="QDialog" name="AddService">
+ <class>AddLogin</class>
+ <widget class="QDialog" name="AddLogin">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -37,54 +37,15 @@
     <rect>
      <x>130</x>
      <y>20</y>
-     <width>151</width>
-     <height>35</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Add service</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="nameTf">
-   <property name="geometry">
-    <rect>
-     <x>72</x>
-     <y>100</y>
-     <width>251</width>
-     <height>43</height>
-    </rect>
-   </property>
-   <property name="placeholderText">
-    <string>Name</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="urlTf">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>220</y>
-     <width>251</width>
-     <height>43</height>
-    </rect>
-   </property>
-   <property name="placeholderText">
-    <string>URL (optionnal)</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="titleURL">
-   <property name="geometry">
-    <rect>
-     <x>68</x>
-     <y>180</y>
      <width>127</width>
      <height>35</height>
     </rect>
    </property>
    <property name="text">
-    <string>URL</string>
+    <string>Add login</string>
    </property>
   </widget>
-  <widget class="QLabel" name="titleName">
+  <widget class="QLabel" name="titleEmail">
    <property name="geometry">
     <rect>
      <x>70</x>
@@ -94,14 +55,53 @@
     </rect>
    </property>
    <property name="text">
-    <string>Name</string>
+    <string>Email</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="titlePwd">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>180</y>
+     <width>127</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Password</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="pwdTf">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>220</y>
+     <width>251</width>
+     <height>43</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>Password</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="emailTf">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>100</y>
+     <width>251</width>
+     <height>43</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>Email</string>
    </property>
   </widget>
   <widget class="QLabel" name="informLabel">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>280</y>
+     <x>20</x>
+     <y>270</y>
      <width>371</width>
      <height>35</height>
     </rect>
@@ -116,7 +116,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>AddService</receiver>
+   <receiver>AddLogin</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -132,7 +132,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>AddService</receiver>
+   <receiver>AddLogin</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
