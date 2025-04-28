@@ -80,6 +80,9 @@
      <height>43</height>
     </rect>
    </property>
+   <property name="echoMode">
+    <enum>QLineEdit::Password</enum>
+   </property>
    <property name="placeholderText">
     <string>Password</string>
    </property>
@@ -104,6 +107,19 @@
      <y>270</y>
      <width>371</width>
      <height>35</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="viewPwd">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>230</y>
+     <width>28</width>
+     <height>29</height>
     </rect>
    </property>
    <property name="text">

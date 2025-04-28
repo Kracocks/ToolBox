@@ -22,6 +22,7 @@ private slots:
 private:
 	int m_serviceId;
 	void accept();
+	void viewPwd();
 	Ui::AddLogin *ui;
 };
 

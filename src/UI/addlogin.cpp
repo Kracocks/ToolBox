@@ -6,7 +6,11 @@
 #include <QDebug>
 #include <QMessageBox>
 
-AddLogin::AddLogin(int serviceId, QWidget *parent) : QDialog(parent), ui(new Ui::AddLogin), m_serviceId(serviceId) { ui->setupUi(this); }
+AddLogin::AddLogin(int serviceId, QWidget *parent) : QDialog(parent), ui(new Ui::AddLogin), m_serviceId(serviceId)
+{
+	ui->setupUi(this);
+	connect(ui->viewPwd, &QCheckBox::stateChanged, this, &AddLogin::viewPwd);
+}
 
 AddLogin::~AddLogin() { delete ui; }
 
@@ -49,5 +53,13 @@ void AddLogin::accept() {
 	} else {
 		QMessageBox::warning(this, "Error adding login", "Error while encrypting the password");
 		return;
+	}
+}
+
+void AddLogin::viewPwd() {
+	if (ui->viewPwd->isChecked()) {
+		ui->pwdTf->setEchoMode(QLineEdit::Normal);
+	} else {
+		ui->pwdTf->setEchoMode(QLineEdit::Password);
 	}
 }
