@@ -63,6 +63,25 @@
      <string>Add service</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="serviceNameSearch">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>80</y>
+      <width>221</width>
+      <height>43</height>
+     </rect>
+    </property>
+    <property name="inputMask">
+     <string/>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::PasswordEchoOnEdit</enum>
+    </property>
+    <property name="placeholderText">
+     <string>Search by name</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

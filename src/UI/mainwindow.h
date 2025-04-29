@@ -15,16 +15,19 @@ class MainWindow : public QMainWindow {
 
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
-	void reload();
+	void reload(std::string name = "");
 	~MainWindow();
 
 private slots:
 	void on_addServiceBtn_clicked();
 
+	void on_serviceNameSearch_textChanged(const QString &arg1);
+
 private:
 	AddService *addService;
 	LoginsWindow *loginsWindow;
 	void on_deleteServiceBtn_clicked();
+	void on_AddService_accepted();
 	void on_row_doubleClicked();
 	Ui::MainWindow *ui;
 };

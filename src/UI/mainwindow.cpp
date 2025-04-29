@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	addService = new AddService();
 	// When service added, reload the table
-	connect(addService, &AddService::accepted, this, &MainWindow::reload);
+	connect(addService, &AddService::accepted, this, &MainWindow::on_AddService_accepted);
 
 	// Interaction when double clicking a row
 	connect(ui->servicesTable, &QTableWidget::itemDoubleClicked, this, &MainWindow::on_row_doubleClicked);
@@ -36,10 +36,15 @@ void MainWindow::on_row_doubleClicked() {
 	loginsWindow->show();
 }
 
-void MainWindow::reload() {
+void MainWindow::reload(std::string name) {
 	// get services
 	impl::ServiceDaoImpl services {};
-	std::vector<model::Service> all = services.findAll();
+	std::vector<model::Service> all {};
+	if (name.empty()) {
+		all = services.findAll();
+	} else {
+		all = services.findByName(name);
+	}
 	// setting table
 	ui->servicesTable->setRowCount(all.size());
 	ui->servicesTable->clearContents();
@@ -74,3 +79,14 @@ void MainWindow::on_deleteServiceBtn_clicked() {
 		reload();
 	}
 }
+
+void MainWindow::on_AddService_accepted() {
+	ui->serviceNameSearch->setText("");
+	reload();
+}
+
+void MainWindow::on_serviceNameSearch_textChanged(const QString &arg1)
+{
+	reload(arg1.toStdString());
+}
+
