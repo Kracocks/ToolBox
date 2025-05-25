@@ -2,6 +2,7 @@
 #define TOKENSWINDOW_H
 
 #include <QWidget>
+#include "../model/Login.h"
 
 namespace Ui {
 	class TokensWindow;
@@ -11,10 +12,16 @@ class TokensWindow : public QWidget {
 	Q_OBJECT
 
 public:
-	explicit TokensWindow(QWidget *parent = nullptr);
+	explicit TokensWindow(model::Login &login, QWidget *parent = nullptr);
 	~TokensWindow();
 
+private slots:
+	void on_addTokenBtn_clicked();
+
 private:
+	model::Login m_login;
+	void reload();
+	void on_deleteTokenBtn_clicked();
 	Ui::TokensWindow *ui;
 };
 
