@@ -19,10 +19,19 @@ LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(p
 	connect(addLogin, &AddLogin::accepted, this, &LoginsWindow::reload);
 
 	// Interaction when double clicking a row
-	// connect(ui->servicesTable, &QTableWidget::itemDoubleClicked, this, &MainWindow::on_row_doubleClicked);
+	connect(ui->loginsTable, &QTableWidget::itemDoubleClicked, this, &LoginsWindow::on_row_doubleClicked);
 }
 
 LoginsWindow::~LoginsWindow() { delete ui; }
+
+void LoginsWindow::on_row_doubleClicked() {
+	int row = ui->loginsTable->currentRow();
+	impl::IdentifiantDaoImpl logins {};
+
+	model::Login login = logins.find(ui->loginsTable->item(row, 0)->data(Qt::DisplayRole).toInt());
+	tokensWindow = new TokensWindow(login);
+	tokensWindow->show();
+}
 
 void LoginsWindow::on_deleteLoginBtn_clicked() {
 	QWidget *w = qobject_cast<QWidget *>(sender());

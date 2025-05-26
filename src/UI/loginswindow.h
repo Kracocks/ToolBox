@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "../model/Service.h"
 #include "addlogin.h"
+#include "tokenswindow.h"
 
 namespace Ui {
 	class LoginsWindow;
@@ -23,7 +24,9 @@ private:
 	model::Service m_service;
 	void reload();
 	void on_deleteLoginBtn_clicked();
+	void on_row_doubleClicked();
 	AddLogin *addLogin;
+	TokensWindow *tokensWindow;
 	Ui::LoginsWindow *ui;
 };
 
