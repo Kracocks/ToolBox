@@ -21,7 +21,14 @@ TokensWindow::TokensWindow(model::Login &login, QWidget *parent) : QWidget(paren
 TokensWindow::~TokensWindow() { delete ui; }
 
 void TokensWindow::on_deleteTokenBtn_clicked() {
-
+	QWidget *w = qobject_cast<QWidget *>(sender());
+	if (w) {
+		impl::TokenDaoImpl tokens {};
+		int id = w->property("idToken").toInt();
+		model::Token token = tokens.find(id);
+		tokens.remove(tokens.find(id));
+		reload();
+	}
 }
 
 void TokensWindow::reload() {

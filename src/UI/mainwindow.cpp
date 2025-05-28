@@ -74,7 +74,6 @@ void MainWindow::on_deleteServiceBtn_clicked() {
 		impl::ServiceDaoImpl services {};
 		int id = w->property("idService").toInt();
 		model::Service service = services.find(id);
-		qDebug() << service.id << QString::fromStdString(service.name) << QString::fromStdString(service.url);
 		services.remove(services.find(id));
 		reload();
 	}

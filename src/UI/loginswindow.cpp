@@ -38,7 +38,6 @@ void LoginsWindow::on_deleteLoginBtn_clicked() {
 		impl::IdentifiantDaoImpl logins {};
 		int id = w->property("idLogin").toInt();
 		model::Login login = logins.find(id);
-		qDebug() << login.id << QString::fromStdString(login.password) << QString::fromStdString(login.password);
 		logins.remove(logins.find(id));
 		reload();
 	}
