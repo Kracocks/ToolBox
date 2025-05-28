@@ -1,7 +1,6 @@
 #include "tokenswindow.h"
 #include "ui_tokenswindow.h"
 #include "../impl/TokenDaoImpl.h"
-#include "../model/Login.h"
 #include <QDebug>
 
 TokensWindow::TokensWindow(model::Login &login, QWidget *parent) : QWidget(parent), ui(new Ui::TokensWindow), m_login(login)
@@ -13,6 +12,10 @@ TokensWindow::TokensWindow(model::Login &login, QWidget *parent) : QWidget(paren
 	// Setup the table
 	ui->tokensTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->tokensTable->setSelectionMode(QAbstractItemView::SingleSelection);
+
+	addToken = new AddToken(m_login.id);
+	// When token added, reload the table
+	connect(addToken, &AddToken::accepted, this, &TokensWindow::reload);
 }
 
 TokensWindow::~TokensWindow() { delete ui; }
@@ -53,5 +56,6 @@ void TokensWindow::reload() {
 void TokensWindow::on_addTokenBtn_clicked()
 {
 	qDebug() << "open dialog to add token";
+	addToken->open();
 }
 

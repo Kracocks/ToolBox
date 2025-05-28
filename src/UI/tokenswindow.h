@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "../model/Login.h"
+#include "addtoken.h"
 
 namespace Ui {
 	class TokensWindow;
@@ -22,6 +23,7 @@ private:
 	model::Login m_login;
 	void reload();
 	void on_deleteTokenBtn_clicked();
+	AddToken *addToken;
 	Ui::TokensWindow *ui;
 };
 

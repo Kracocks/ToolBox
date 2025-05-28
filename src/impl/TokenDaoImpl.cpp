@@ -66,7 +66,7 @@ namespace impl {
 	std::vector<model::Token> TokenDaoImpl::findByLogin(const int &login_id) {
 	    std::vector<model::Token> tokens;
     	sqlite3 *bd = m_connector.getDB();
-    	const std::string sql = "SELECT token_id, login_id, value, description, expired_at FROM TOKEN where login_id = ?;";
+		const std::string sql = "SELECT token_id, login_id, value, description, expired_at FROM TOKEN where login_id = ?;";
     	sqlite3_stmt *stmt;
 
     	int status = sqlite3_prepare_v3(bd, sql.c_str(), -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr);
@@ -104,8 +104,8 @@ namespace impl {
     	sqlite3_bind_int(stmt, 1, getLastId());
     	sqlite3_bind_int(stmt, 2, item.login_id);
     	sqlite3_bind_text(stmt, 3, item.value.c_str(), -1, SQLITE_STATIC);
-    	sqlite3_bind_text(stmt, 3, item.description.c_str(), -1, SQLITE_STATIC);
-    	sqlite3_bind_text(stmt, 3, item.expired_at.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_text(stmt, 4, item.description.c_str(), -1, SQLITE_STATIC);
+		sqlite3_bind_text(stmt, 5, item.expired_at.c_str(), -1, SQLITE_STATIC);
 
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error inserting TOKEN" << std::endl;

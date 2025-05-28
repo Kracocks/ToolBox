@@ -15,6 +15,7 @@ add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
     loginswindow.h loginswindow.cpp loginswindow.ui
     addlogin.h addlogin.cpp addlogin.ui
     tokenswindow.h tokenswindow.cpp tokenswindow.ui
+    addtoken.h addtoken.cpp addtoken.ui
 )
 
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
