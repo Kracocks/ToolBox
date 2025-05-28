@@ -2,7 +2,6 @@
 #include "ui_addlogin.h"
 #include "../impl/IdentifiantDaoImpl.h"
 #include "../model/Login.h"
-#include "../model/Encrypt.h"
 #include <QDebug>
 #include <QMessageBox>
 
@@ -36,24 +35,15 @@ void AddLogin::accept() {
 		return;
 	}
 	impl::IdentifiantDaoImpl logins {};
-	qDebug() << "here1";
 	const std::string password = ui->pwdTf->text().toStdString();
-	std::string encryptedPassword {};
-	if (model::Encrypt::encrypt(password, &encryptedPassword)) {
-		qDebug() << "here3";
-		model::Login login {0, m_serviceId, ui->emailTf->text().toStdString(), encryptedPassword};
-		qDebug() << "here4";
-		logins.insert(login);
-		if (login.id == -1) {
-			QMessageBox::warning(this, "Error adding login", QString::fromStdString(login.email));
-			return;
-		}
-		QDialog::accept();
-		return;
-	} else {
-		QMessageBox::warning(this, "Error adding login", "Error while encrypting the password");
+	model::Login login {0, m_serviceId, ui->emailTf->text().toStdString(), password};
+	logins.insert(login);
+	if (login.id == -1) {
+		QMessageBox::warning(this, "Error adding login", QString::fromStdString(login.email));
 		return;
 	}
+	QDialog::accept();
+	return;
 }
 
 void AddLogin::viewPwd() {

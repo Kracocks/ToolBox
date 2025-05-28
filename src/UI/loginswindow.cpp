@@ -1,7 +1,6 @@
 #include "loginswindow.h"
 #include "ui_loginswindow.h"
 #include "../impl/IdentifiantDaoImpl.h"
-#include "../model/Encrypt.h"
 #include <QDebug>
 
 LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(parent), ui(new Ui::LoginsWindow), m_service(service)
@@ -67,11 +66,7 @@ void LoginsWindow::reload() {
 		// set elements
 		ui->loginsTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].id)));
 		ui->loginsTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].email)));
-		std::string decrypted_password {};
-		if (!model::Encrypt::decrypt(all[row].password, &decrypted_password)) {
-			qDebug() << "problem while decrypting";
-		}
-		ui->loginsTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(decrypted_password)));
+		ui->loginsTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].password)));
 		ui->loginsTable->setCellWidget(row, 3, deleteBtn);
 	}
 }

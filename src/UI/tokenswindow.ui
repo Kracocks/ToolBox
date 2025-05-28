@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Add login</string>
+    <string>Add token</string>
    </property>
   </widget>
   <widget class="QTableWidget" name="tokensTable">

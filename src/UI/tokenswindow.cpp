@@ -2,7 +2,6 @@
 #include "ui_tokenswindow.h"
 #include "../impl/TokenDaoImpl.h"
 #include "../model/Login.h"
-#include "../model/Encrypt.h"
 #include <QDebug>
 
 TokensWindow::TokensWindow(model::Login &login, QWidget *parent) : QWidget(parent), ui(new Ui::TokensWindow), m_login(login)
@@ -44,10 +43,7 @@ void TokensWindow::reload() {
 		// set elements
 		ui->tokensTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].id)));
 		std::string decrypted_value {};
-		if (!model::Encrypt::decrypt(all[row].value, &decrypted_value)) {
-			qDebug() << "problem while decrypting";
-		}
-		ui->tokensTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(decrypted_value)));
+		ui->tokensTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].value)));
 		ui->tokensTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].description)));
 		ui->tokensTable->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(all[row].expired_at)));
 		ui->tokensTable->setCellWidget(row, 4, deleteBtn);
