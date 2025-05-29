@@ -31,6 +31,7 @@ void Connection::login() {
 	} else {
 		qDebug() << "Failed to open db";
 		attempt--;
+		bd.close();
 		ui->passwordTf->setEnabled(false);
 		ui->informationLabel->setText("Verifying...");
 
@@ -39,7 +40,7 @@ void Connection::login() {
 			QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
 		if (attempt == 0) {
-			ui->informationLabel->setText("wrong password No attempt left.\nLeaving...");
+			ui->informationLabel->setText("Wrong password. No attempt left.\nLeaving...");
 			QTime dieTime= QTime::currentTime().addSecs(3);
 			while (QTime::currentTime() < dieTime)
 				QCoreApplication::processEvents(QEventLoop::AllEvents, 100);

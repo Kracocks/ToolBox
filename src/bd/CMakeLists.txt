@@ -12,6 +12,9 @@ add_library(bd STATIC
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SQLCIPHER REQUIRED sqlcipher)
 
-target_link_libraries(bd PUBLIC ${SQLCIPHER_LIBRARIES})
-
 target_include_directories(bd PUBLIC ${SQLCIPHER_INCLUDE_DIRS})
+target_link_directories(bd PUBLIC ${SQLCIPHER_LIBRARY_DIRS})
+target_link_libraries(bd PUBLIC ${SQLCIPHER_LIBRARIES})
+target_compile_definitions(bd PUBLIC ${SQLCIPHER_CFLAGS_OTHER})
+target_compile_definitions(bd PUBLIC SQLITE_HAS_CODEC)
+

@@ -1,5 +1,6 @@
 #include <iostream>
-#include <sqlcipher/sqlite3.h>
+#define SQLITE_HAS_CODEC
+#include <sqlite3.h>
 
 #include "Connector.h"
 
@@ -27,12 +28,13 @@ namespace bd {
         }
 
         // Define database key
-        std::string pragma_key = "PRAGMA key = '" + key + "';";
-        char* err_msg = nullptr;
-        res = sqlite3_exec(m_bd, pragma_key.c_str(), nullptr, nullptr, &err_msg);
+		char* err_msg = nullptr;
+		res = sqlite3_key(m_bd, key.c_str(), key.length());
+		// std::string pragma_key = "PRAGMA key = '" + key + "';";
+		// res = sqlite3_exec(m_bd, pragma_key.c_str(), nullptr, nullptr, &err_msg);
         if (res != SQLITE_OK) {
-            std::cerr << "Error when applying database key : " << err_msg << std::endl;
-            sqlite3_free(err_msg);
+			std::cerr << "Error when applying database key : "
+					  << sqlite3_errmsg(m_bd) << std::endl;
             sqlite3_close(m_bd);
             m_bd = nullptr;
             return;
@@ -43,13 +45,12 @@ namespace bd {
     		std::ostringstream buffer;
     		buffer << schemaFile.rdbuf();
     		std::string sql = buffer.str();
-
     		res = sqlite3_exec(m_bd, sql.c_str(), nullptr, nullptr, &err_msg);
     		if (res != SQLITE_OK) {
     			std::cerr << "Error when executing SQL file : " << err_msg << std::endl;
     			sqlite3_free(err_msg);
+				sqlite3_close(m_bd);
 				m_bd = nullptr;
-				return;
     		}
     	} else {
     		std::cerr << "Cannot load creation.sql file" << std::endl;
@@ -77,4 +78,8 @@ namespace bd {
 			m_connector = new Connector("data/passwords.sqlite", password);
         return *m_connector;
     }
+
+	void Connector::close() {
+		m_connector = nullptr;
+	}
 } // bd

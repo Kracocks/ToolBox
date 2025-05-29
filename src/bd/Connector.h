@@ -22,6 +22,7 @@ namespace bd {
         ~Connector();
 		static Connector &getInstance(const std::string& password);
         [[nodiscard]] sqlite3 *getDB() const;
+		static void close();
     };
 
 } // bd
