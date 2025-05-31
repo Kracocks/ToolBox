@@ -11,11 +11,11 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
     connection.h connection.cpp connection.ui
-    addservice.h addservice.cpp addservice.ui
+    add_popups/addservice.h add_popups/addservice.cpp add_popups/addservice.ui
     loginswindow.h loginswindow.cpp loginswindow.ui
-    addlogin.h addlogin.cpp addlogin.ui
+    add_popups/addlogin.h add_popups/addlogin.cpp add_popups/addlogin.ui
     tokenswindow.h tokenswindow.cpp tokenswindow.ui
-    addtoken.h addtoken.cpp addtoken.ui
+    add_popups/addtoken.h add_popups/addtoken.cpp add_popups/addtoken.ui
 )
 
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "../model/Login.h"
-#include "addtoken.h"
+#include "add_popups/addtoken.h"
 
 namespace Ui {
 	class TokensWindow;

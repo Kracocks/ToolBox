@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include "addservice.h"
+#include "add_popups/addservice.h"
 #include "loginswindow.h"
 
 namespace Ui {

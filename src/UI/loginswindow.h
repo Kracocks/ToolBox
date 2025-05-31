@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "../model/Service.h"
-#include "addlogin.h"
+#include "add_popups/addlogin.h"
 #include "tokenswindow.h"
 
 namespace Ui {
