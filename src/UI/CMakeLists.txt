@@ -16,6 +16,9 @@ add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
     add_popups/addlogin.h add_popups/addlogin.cpp add_popups/addlogin.ui
     tokenswindow.h tokenswindow.cpp tokenswindow.ui
     add_popups/addtoken.h add_popups/addtoken.cpp add_popups/addtoken.ui
+
+    custom_widgets/showservicewidget.h custom_widgets/showservicewidget.cpp custom_widgets/showservicewidget.ui
+    custom_widgets/flowlayout.h custom_widgets/flowlayout.cpp
 )
 
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../impl/ServiceDaoImpl.h"
+#include "custom_widgets/showservicewidget.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -17,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	// Interaction when double clicking a row
 	connect(ui->servicesTable, &QTableWidget::itemDoubleClicked, this, &MainWindow::on_row_doubleClicked);
+
+	layout_services = new FlowLayout();
+	ui->scrollAreaWidgetContents->setLayout(layout_services);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -65,6 +69,10 @@ void MainWindow::reload(std::string name) {
 		ui->servicesTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].name)));
 		ui->servicesTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].url)));
 		ui->servicesTable->setCellWidget(row, 3, deleteBtn);
+
+		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
+		layout_services->addWidget(widget);
+
 	}
 }
 

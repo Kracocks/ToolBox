@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include "add_popups/addservice.h"
 #include "loginswindow.h"
+#include "custom_widgets/flowlayout.h"
 
 namespace Ui {
 	class MainWindow;
@@ -26,6 +27,7 @@ private slots:
 private:
 	AddService *addService;
 	LoginsWindow *loginsWindow;
+	FlowLayout *layout_services;
 	void on_deleteServiceBtn_clicked();
 	void on_AddService_accepted();
 	void on_row_doubleClicked();

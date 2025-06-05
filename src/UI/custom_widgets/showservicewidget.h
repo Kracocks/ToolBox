@@ -1,0 +1,25 @@
+#ifndef SHOWSERVICEWIDGET_H
+#define SHOWSERVICEWIDGET_H
+
+#include <QWidget>
+#include "../../model/Service.h"
+#include "../loginswindow.h"
+
+namespace Ui {
+	class ShowServiceWidget;
+}
+
+class ShowServiceWidget : public QWidget {
+	Q_OBJECT
+
+public:
+	explicit ShowServiceWidget(model::Service &service, QWidget *parent = nullptr);
+	~ShowServiceWidget();
+
+private:
+	model::Service m_service;
+	Ui::ShowServiceWidget *ui;
+	Ui::LoginsWindow *logins_window;
+};
+
+#endif // SHOWSERVICEWIDGET_H
