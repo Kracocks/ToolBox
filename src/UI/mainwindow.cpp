@@ -8,16 +8,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
 	ui->setupUi(this);
 
-	// Setup the table
-	ui->servicesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-	ui->servicesTable->setSelectionMode(QAbstractItemView::SingleSelection);
-
 	addService = new AddService();
 	// When service added, reload the table
 	connect(addService, &AddService::accepted, this, &MainWindow::on_AddService_accepted);
-
-	// Interaction when double clicking a row
-	connect(ui->servicesTable, &QTableWidget::itemDoubleClicked, this, &MainWindow::on_row_doubleClicked);
 
 	layout_services = new FlowLayout();
 	ui->scrollAreaWidgetContents->setLayout(layout_services);
@@ -31,21 +24,18 @@ void MainWindow::on_addServiceBtn_clicked()
 	addService->open();
 }
 
-void MainWindow::on_row_doubleClicked() {
-	int row = ui->servicesTable->currentRow();
-	impl::ServiceDaoImpl services {};
-
-	model::Service service = services.find(ui->servicesTable->item(row, 0)->data(Qt::DisplayRole).toInt());
-	loginsWindow = new LoginsWindow(service);
-	loginsWindow->show();
-}
-
 void MainWindow::reload() {
 	// get services
 	impl::ServiceDaoImpl services {};
 	std::vector<model::Service> all {};
 	std::string name = ui->serviceNameSearch->text().toStdString();
+	if (name.empty()) {
+		all = services.findAll();
+	} else {
+		all = services.findByName(name);
+	}
 
+	// clearing layout
 	QLayoutItem *item;
 	while ((item = layout_services->takeAt(0)) != nullptr) {
 		if (QWidget *widget = item->widget()) {
@@ -54,31 +44,12 @@ void MainWindow::reload() {
 		delete item;
 	}
 
-	if (name.empty()) {
-		all = services.findAll();
-	} else {
-		all = services.findByName(name);
-	}
-	// setting table
-	ui->servicesTable->setRowCount(all.size());
-	ui->servicesTable->clearContents();
-	ui->servicesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	// set header
-	ui->servicesTable->setColumnCount(4);
-	ui->servicesTable->setHorizontalHeaderLabels({"", "Name", "URL", ""});
-	ui->servicesTable->setColumnHidden(0, true);
 	// add elements
 	for (int row = 0; row < all.size(); ++row) {
 		// set delete button
 		QPushButton *deleteBtn = new QPushButton("Delete");
 		deleteBtn->setProperty("idService", all[row].id);
 		connect(deleteBtn, &QPushButton::clicked, this, &MainWindow::on_deleteServiceBtn_clicked);
-
-		// set elements
-		ui->servicesTable->setItem(row, 0, new QTableWidgetItem(QString::number(all[row].id)));
-		ui->servicesTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(all[row].name)));
-		ui->servicesTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(all[row].url)));
-		ui->servicesTable->setCellWidget(row, 3, deleteBtn);
 
 		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
 		layout_services->addWidget(widget);

@@ -30,7 +30,6 @@ private:
 	FlowLayout *layout_services;
 	void on_deleteServiceBtn_clicked();
 	void on_AddService_accepted();
-	void on_row_doubleClicked();
 	Ui::MainWindow *ui;
 };
 
