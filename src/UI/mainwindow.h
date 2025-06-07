@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow {
 
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
-	void reload(std::string name = "");
+	void reload();
 	~MainWindow();
 
 private slots:

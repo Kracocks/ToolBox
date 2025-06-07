@@ -1,5 +1,6 @@
 #include "showservicewidget.h"
 #include "ui_showservicewidget.h"
+#include "../../impl/ServiceDaoImpl.h"
 
 ShowServiceWidget::ShowServiceWidget(model::Service &service, QWidget *parent) :
 	QWidget(parent),
@@ -18,3 +19,10 @@ ShowServiceWidget::ShowServiceWidget(model::Service &service, QWidget *parent) :
 }
 
 ShowServiceWidget::~ShowServiceWidget() { delete ui; }
+
+void ShowServiceWidget::on_delete_btn_clicked()
+{
+	impl::ServiceDaoImpl services {};
+	services.remove(m_service);
+	emit delete_clicked();
+}

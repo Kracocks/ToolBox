@@ -40,10 +40,20 @@ void MainWindow::on_row_doubleClicked() {
 	loginsWindow->show();
 }
 
-void MainWindow::reload(std::string name) {
+void MainWindow::reload() {
 	// get services
 	impl::ServiceDaoImpl services {};
 	std::vector<model::Service> all {};
+	std::string name = ui->serviceNameSearch->text().toStdString();
+
+	QLayoutItem *item;
+	while ((item = layout_services->takeAt(0)) != nullptr) {
+		if (QWidget *widget = item->widget()) {
+			widget->deleteLater();
+		}
+		delete item;
+	}
+
 	if (name.empty()) {
 		all = services.findAll();
 	} else {
@@ -72,7 +82,8 @@ void MainWindow::reload(std::string name) {
 
 		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
 		layout_services->addWidget(widget);
-
+		connect(widget, &ShowServiceWidget::delete_clicked,
+				this, &MainWindow::reload);
 	}
 }
 
@@ -94,6 +105,6 @@ void MainWindow::on_AddService_accepted() {
 
 void MainWindow::on_serviceNameSearch_textChanged(const QString &arg1)
 {
-	reload(arg1.toStdString());
+	reload();
 }
 

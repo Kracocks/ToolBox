@@ -16,6 +16,12 @@ public:
 	explicit ShowServiceWidget(model::Service &service, QWidget *parent = nullptr);
 	~ShowServiceWidget();
 
+signals:
+	void delete_clicked();
+
+private slots:
+	void on_delete_btn_clicked();
+
 private:
 	model::Service m_service;
 	Ui::ShowServiceWidget *ui;
