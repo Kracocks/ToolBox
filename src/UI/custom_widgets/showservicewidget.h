@@ -22,6 +22,8 @@ signals:
 private slots:
 	void on_delete_btn_clicked();
 
+	void on_copy_url_btn_clicked();
+
 private:
 	model::Service m_service;
 	Ui::ShowServiceWidget *ui;

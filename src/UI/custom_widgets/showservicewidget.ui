@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>180</height>
+    <width>352</width>
+    <height>184</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>351</width>
-     <height>191</height>
+     <height>193</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="vb_show_input_widget">
@@ -119,6 +119,9 @@
           <height>35</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy to clipboard URL&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="whatsThis">
          <string>Copy to clipboard</string>
         </property>
@@ -150,6 +153,13 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="hb_edit">
