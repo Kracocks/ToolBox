@@ -46,26 +46,10 @@ void MainWindow::reload() {
 
 	// add elements
 	for (int row = 0; row < all.size(); ++row) {
-		// set delete button
-		QPushButton *deleteBtn = new QPushButton("Delete");
-		deleteBtn->setProperty("idService", all[row].id);
-		connect(deleteBtn, &QPushButton::clicked, this, &MainWindow::on_deleteServiceBtn_clicked);
-
 		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
 		layout_services->addWidget(widget);
 		connect(widget, &ShowServiceWidget::delete_clicked,
 				this, &MainWindow::reload);
-	}
-}
-
-void MainWindow::on_deleteServiceBtn_clicked() {
-	QWidget *w = qobject_cast<QWidget *>(sender());
-	if (w) {
-		impl::ServiceDaoImpl services {};
-		int id = w->property("idService").toInt();
-		model::Service service = services.find(id);
-		services.remove(services.find(id));
-		reload();
 	}
 }
 

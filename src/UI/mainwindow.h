@@ -28,7 +28,6 @@ private:
 	AddService *addService;
 	LoginsWindow *loginsWindow;
 	FlowLayout *layout_services;
-	void on_deleteServiceBtn_clicked();
 	void on_AddService_accepted();
 	Ui::MainWindow *ui;
 };
