@@ -13,16 +13,6 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QTableWidget" name="loginsTable">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>130</y>
-     <width>801</width>
-     <height>361</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="subtitle">
    <property name="geometry">
     <rect>
@@ -61,6 +51,35 @@
    <property name="text">
     <string>Add login</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>140</y>
+     <width>801</width>
+     <height>351</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="hbox_layout">
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>797</width>
+         <height>347</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

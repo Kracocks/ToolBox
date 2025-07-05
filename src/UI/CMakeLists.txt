@@ -19,6 +19,7 @@ add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
 
     custom_widgets/showservicewidget.h custom_widgets/showservicewidget.cpp custom_widgets/showservicewidget.ui
     custom_widgets/flowlayout.h custom_widgets/flowlayout.cpp
+    custom_widgets/showpasswordwidget.h custom_widgets/showpasswordwidget.cpp custom_widgets/showpasswordwidget.ui
 )
 
 target_include_directories(UI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

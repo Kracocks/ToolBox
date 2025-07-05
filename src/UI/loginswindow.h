@@ -5,6 +5,7 @@
 #include "../model/Service.h"
 #include "add_popups/addlogin.h"
 #include "tokenswindow.h"
+#include "custom_widgets/flowlayout.h"
 
 namespace Ui {
 	class LoginsWindow;
@@ -23,10 +24,9 @@ private slots:
 private:
 	model::Service m_service;
 	void reload();
-	void on_deleteLoginBtn_clicked();
-	void on_row_doubleClicked();
 	AddLogin *addLogin;
 	TokensWindow *tokensWindow;
+	FlowLayout *layout_logins;
 	Ui::LoginsWindow *ui;
 };
 
