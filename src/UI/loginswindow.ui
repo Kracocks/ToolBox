@@ -81,6 +81,23 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../../data/custom_icons/back_arrow_icon.png</normaloff>../../data/custom_icons/back_arrow_icon.png</iconset>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

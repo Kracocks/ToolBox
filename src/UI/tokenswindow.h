@@ -4,12 +4,13 @@
 #include <QWidget>
 #include "../model/Login.h"
 #include "add_popups/addtoken.h"
+#include "reloadable.h"
 
 namespace Ui {
 	class TokensWindow;
 }
 
-class TokensWindow : public QWidget {
+class TokensWindow : public QWidget, public Reloadable {
 	Q_OBJECT
 
 public:

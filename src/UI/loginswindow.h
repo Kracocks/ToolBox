@@ -6,12 +6,13 @@
 #include "add_popups/addlogin.h"
 #include "tokenswindow.h"
 #include "custom_widgets/flowlayout.h"
+#include "reloadable.h"
 
 namespace Ui {
 	class LoginsWindow;
 }
 
-class LoginsWindow : public QWidget {
+class LoginsWindow : public QWidget, public Reloadable {
 	Q_OBJECT
 
 public:

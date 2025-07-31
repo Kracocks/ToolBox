@@ -2,10 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QPushButton>
-#include "add_popups/addservice.h"
-#include "loginswindow.h"
-#include "custom_widgets/flowlayout.h"
+#include <stack>
 
 namespace Ui {
 	class MainWindow;
@@ -16,19 +13,12 @@ class MainWindow : public QMainWindow {
 
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
-	void reload();
 	~MainWindow();
-
-private slots:
-	void on_addServiceBtn_clicked();
-
-	void on_serviceNameSearch_textChanged(const QString &arg1);
+	void reload();
 
 private:
-	AddService *addService;
-	LoginsWindow *loginsWindow;
-	FlowLayout *layout_services;
-	void on_AddService_accepted();
+	int current_index;
+	std::stack<QWidget*> navigation_stack;
 	Ui::MainWindow *ui;
 };
 

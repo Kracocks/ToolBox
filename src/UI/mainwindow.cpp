@@ -1,65 +1,24 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "../impl/ServiceDaoImpl.h"
-#include "custom_widgets/showservicewidget.h"
-#include <QDebug>
+#include "servicewindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
-	addService = new AddService();
-	// When service added, reload the table
-	connect(addService, &AddService::accepted, this, &MainWindow::on_AddService_accepted);
-
-	layout_services = new FlowLayout();
-	ui->scrollAreaWidgetContents->setLayout(layout_services);
+	ServiceWindow *services_window = new ServiceWindow(this);
+	ui->stackedWidget->addWidget(services_window);
+	current_index = ui->stackedWidget->indexOf(services_window);
+	navigation_stack.push(services_window);
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::on_addServiceBtn_clicked()
+void MainWindow::reload()
 {
-	qDebug() << "open dialog to add service";
-	addService->open();
-}
-
-void MainWindow::reload() {
-	// get services
-	impl::ServiceDaoImpl services {};
-	std::vector<model::Service> all {};
-	std::string name = ui->serviceNameSearch->text().toStdString();
-	if (name.empty()) {
-		all = services.findAll();
-	} else {
-		all = services.findByName(name);
-	}
-
-	// clearing layout
-	QLayoutItem *item;
-	while ((item = layout_services->takeAt(0)) != nullptr) {
-		if (QWidget *widget = item->widget()) {
-			widget->deleteLater();
-		}
-		delete item;
-	}
-
-	// add elements
-	for (int row = 0; row < all.size(); ++row) {
-		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
-		layout_services->addWidget(widget);
-		connect(widget, &ShowServiceWidget::delete_clicked,
-				this, &MainWindow::reload);
+	QWidget *current_window = ui->stackedWidget->currentWidget();
+	Reloadable *r = dynamic_cast<Reloadable*>(current_window);
+	if (r) {
+		r->reload();
 	}
 }
-
-void MainWindow::on_AddService_accepted() {
-	ui->serviceNameSearch->setText("");
-	reload();
-}
-
-void MainWindow::on_serviceNameSearch_textChanged(const QString &arg1)
-{
-	reload();
-}
-

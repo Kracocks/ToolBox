@@ -31,6 +31,11 @@ void ShowServiceWidget::on_delete_btn_clicked()
 	emit delete_clicked();
 }
 
+void ShowServiceWidget::on_details_btn_clicked()
+{
+
+}
+
 void ShowServiceWidget::on_copy_url_btn_clicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();

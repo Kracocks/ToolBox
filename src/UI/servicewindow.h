@@ -1,0 +1,35 @@
+#ifndef SERVICEWINDOW_H
+#define SERVICEWINDOW_H
+
+#include <QWidget>
+#include <QPushButton>
+#include "add_popups/addservice.h"
+#include "loginswindow.h"
+#include "custom_widgets/flowlayout.h"
+
+namespace Ui {
+	class ServiceWindow;
+}
+
+class ServiceWindow : public QWidget, public Reloadable {
+	Q_OBJECT
+
+public:
+	explicit ServiceWindow(QWidget *parent = nullptr);
+	void reload();
+	~ServiceWindow();
+
+private slots:
+	void on_addServiceBtn_clicked();
+
+	void on_serviceNameSearch_textChanged(const QString &arg1);
+
+private:
+	AddService *addService;
+	LoginsWindow *loginsWindow;
+	FlowLayout *layout_services;
+	void on_AddService_accepted();
+	Ui::ServiceWindow *ui;
+};
+
+#endif // SERVICEWINDOW_H
