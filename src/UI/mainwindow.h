@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <stack>
+#include "../model/Service.h"
 
 namespace Ui {
 	class MainWindow;
@@ -20,6 +21,8 @@ private:
 	int current_index;
 	std::stack<QWidget*> navigation_stack;
 	Ui::MainWindow *ui;
+
+	void showLogins(model::Service &service);
 };
 
 #endif // MAINWINDOW_H

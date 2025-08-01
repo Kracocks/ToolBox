@@ -33,7 +33,7 @@ void ShowServiceWidget::on_delete_btn_clicked()
 
 void ShowServiceWidget::on_details_btn_clicked()
 {
-
+	emit details_clicked(m_service);
 }
 
 void ShowServiceWidget::on_copy_url_btn_clicked()

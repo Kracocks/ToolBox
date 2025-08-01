@@ -35,6 +35,11 @@ void ServiceWindow::on_serviceNameSearch_textChanged(const QString &arg1)
 	reload();
 }
 
+void ServiceWindow::on_details_clicked(model::Service &service)
+{
+	emit details_cliked(service);
+}
+
 void ServiceWindow::reload()
 {
 	// get services
@@ -60,7 +65,11 @@ void ServiceWindow::reload()
 	for (int row = 0; row < all.size(); ++row) {
 		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
 		layout_services->addWidget(widget);
+		//received delete button click
 		connect(widget, &ShowServiceWidget::delete_clicked,
 				this, &ServiceWindow::reload);
+		//received details button click
+		connect(widget, &ShowServiceWidget::details_clicked,
+				this, &ServiceWindow::on_details_clicked);
 	}
 }

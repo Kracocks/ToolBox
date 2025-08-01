@@ -19,6 +19,9 @@ public:
 	void reload();
 	~ServiceWindow();
 
+signals:
+	void details_cliked(model::Service &service);
+
 private slots:
 	void on_addServiceBtn_clicked();
 
@@ -29,6 +32,7 @@ private:
 	LoginsWindow *loginsWindow;
 	FlowLayout *layout_services;
 	void on_AddService_accepted();
+	void on_details_clicked(model::Service &service);
 	Ui::ServiceWindow *ui;
 };
 

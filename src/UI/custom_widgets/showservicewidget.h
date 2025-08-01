@@ -18,7 +18,7 @@ public:
 
 signals:
 	void delete_clicked();
-	void details_clicked();
+	void details_clicked(model::Service &service);
 
 private slots:
 	void on_delete_btn_clicked();
