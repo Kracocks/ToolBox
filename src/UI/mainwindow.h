@@ -22,7 +22,8 @@ private:
 	std::stack<QWidget*> navigation_stack;
 	Ui::MainWindow *ui;
 
-	void showLogins(model::Service &service);
+	void showServicesWindow();
+	void showLoginsWindow(model::Service &service);
 };
 
 #endif // MAINWINDOW_H
