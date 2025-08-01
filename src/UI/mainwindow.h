@@ -15,14 +15,15 @@ class MainWindow : public QMainWindow {
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
-	void reload();
+	void showServicesWindow();
 
 private:
 	int current_index;
 	std::stack<QWidget*> navigation_stack;
 	Ui::MainWindow *ui;
 
-	void showServicesWindow();
+	void back();
+	void reload();
 	void showLoginsWindow(model::Service &service);
 };
 

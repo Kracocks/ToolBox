@@ -19,7 +19,12 @@ public:
 	explicit LoginsWindow(model::Service &service, QWidget *parent = nullptr);
 	~LoginsWindow();
 
+signals:
+	void return_clicked();
+
 private slots:
+	void on_returnBtn_clicked();
+
 	void on_addLoginBtn_clicked();
 
 private:

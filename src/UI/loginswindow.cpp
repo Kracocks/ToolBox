@@ -19,6 +19,11 @@ LoginsWindow::LoginsWindow(model::Service &service, QWidget *parent) : QWidget(p
 
 LoginsWindow::~LoginsWindow() { delete ui; }
 
+void LoginsWindow::on_returnBtn_clicked()
+{
+	emit return_clicked();
+}
+
 void LoginsWindow::on_addLoginBtn_clicked()
 {
 	qDebug() << "open dialog to add login";

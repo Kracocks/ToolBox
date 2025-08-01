@@ -26,7 +26,7 @@ void Connection::login() {
 		qDebug() << "ok";
 		ui->informationLabel->setText("");
 		mainwindow->show();
-		mainwindow->reload();
+		mainwindow->showServicesWindow();
 		this->close();
 	} else {
 		qDebug() << "Failed to open db";

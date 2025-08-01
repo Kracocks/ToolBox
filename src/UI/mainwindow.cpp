@@ -6,8 +6,6 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-
-	showServicesWindow();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -21,16 +19,29 @@ void MainWindow::showServicesWindow()
 	navigation_stack.push(services_window);
 
 	ui->stackedWidget->setCurrentWidget(services_window);
+	reload();
 }
 
 void MainWindow::showLoginsWindow(model::Service &service)
 {
 	LoginsWindow *logins_window = new LoginsWindow(service, this);
+	connect(logins_window, &LoginsWindow::return_clicked, this, &MainWindow::back);
 	ui->stackedWidget->addWidget(logins_window);
 	current_index = ui->stackedWidget->indexOf(logins_window);
 	navigation_stack.push(logins_window);
 
 	ui->stackedWidget->setCurrentWidget(logins_window);
+	reload();
+}
+
+void MainWindow::back()
+{
+	navigation_stack.pop();
+	QWidget *previous_window = navigation_stack.top();
+	current_index = ui->stackedWidget->indexOf(previous_window);
+
+	ui->stackedWidget->setCurrentWidget(previous_window);
+	reload();
 }
 
 void MainWindow::reload()
