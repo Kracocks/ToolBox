@@ -19,6 +19,8 @@ void MainWindow::showServicesWindow()
 	ui->stackedWidget->addWidget(services_window);
 	current_index = ui->stackedWidget->indexOf(services_window);
 	navigation_stack.push(services_window);
+
+	ui->stackedWidget->setCurrentWidget(services_window);
 }
 
 void MainWindow::showLoginsWindow(model::Service &service)
