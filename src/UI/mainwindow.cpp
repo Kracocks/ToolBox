@@ -26,11 +26,23 @@ void MainWindow::showLoginsWindow(model::Service &service)
 {
 	LoginsWindow *logins_window = new LoginsWindow(service, this);
 	connect(logins_window, &LoginsWindow::return_clicked, this, &MainWindow::back);
+	connect(logins_window, &LoginsWindow::details_clicked, this, &MainWindow::showTokensWindow);
 	ui->stackedWidget->addWidget(logins_window);
 	current_index = ui->stackedWidget->indexOf(logins_window);
 	navigation_stack.push(logins_window);
 
 	ui->stackedWidget->setCurrentWidget(logins_window);
+	reload();
+}
+
+void MainWindow::showTokensWindow(model::Login &login)
+{
+	TokensWindow *tokens_window = new TokensWindow(login, this);
+	ui->stackedWidget->addWidget(tokens_window);
+	current_index = ui->stackedWidget->indexOf(tokens_window);
+	navigation_stack.push(tokens_window);
+
+	ui->stackedWidget->setCurrentWidget(tokens_window);
 	reload();
 }
 

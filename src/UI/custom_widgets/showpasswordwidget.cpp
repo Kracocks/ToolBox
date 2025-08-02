@@ -33,9 +33,9 @@ void ShowPasswordWidget::on_copy_pwd_btn_clicked()
 	if (clipboard->supportsSelection()) {
 		clipboard->setText(ui->login_pwd->text(), QClipboard::Selection);
 	}
-#if defined(Q_OS_LINUX)
-	QThread::msleep(1); //workaround for copied text not being available...
-#endif
+	#if defined(Q_OS_LINUX)
+		QThread::msleep(1); //workaround for copied text not being available...
+	#endif
 
 	QMessageBox* msgbox = new QMessageBox(this);
 	msgbox->setWindowTitle("Note");
@@ -47,4 +47,9 @@ void ShowPasswordWidget::on_copy_pwd_btn_clicked()
 	QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
 	QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(deleteLater()));
 	timer->start(1000);
+}
+
+void ShowPasswordWidget::on_details_btn_clicked()
+{
+	emit details_clicked(m_login);
 }

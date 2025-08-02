@@ -19,8 +19,12 @@ public:
 	explicit LoginsWindow(model::Service &service, QWidget *parent = nullptr);
 	~LoginsWindow();
 
+	void on_details_clicked(model::Login &login);
+	void reload();
+
 signals:
 	void return_clicked();
+	void details_clicked(model::Login &login);
 
 private slots:
 	void on_returnBtn_clicked();
@@ -29,7 +33,6 @@ private slots:
 
 private:
 	model::Service m_service;
-	void reload();
 	AddLogin *addLogin;
 	TokensWindow *tokensWindow;
 	FlowLayout *layout_logins;

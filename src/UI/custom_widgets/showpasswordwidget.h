@@ -17,11 +17,14 @@ public:
 
 signals:
 	void delete_clicked();
+	void details_clicked(model::Login &login);
 
 private slots:
 	void on_delete_btn_clicked();
 
 	void on_copy_pwd_btn_clicked();
+
+	void on_details_btn_clicked();
 
 private:
 	Ui::ShowPasswordWidget *ui;

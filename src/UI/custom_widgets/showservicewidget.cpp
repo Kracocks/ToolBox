@@ -31,11 +31,6 @@ void ShowServiceWidget::on_delete_btn_clicked()
 	emit delete_clicked();
 }
 
-void ShowServiceWidget::on_details_btn_clicked()
-{
-	emit details_clicked(m_service);
-}
-
 void ShowServiceWidget::on_copy_url_btn_clicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();
@@ -57,4 +52,9 @@ void ShowServiceWidget::on_copy_url_btn_clicked()
 	QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(stop()));
 	QObject::connect(timer, SIGNAL(timeout()), timer, SLOT(deleteLater()));
 	timer->start(1000);
+}
+
+void ShowServiceWidget::on_details_btn_clicked()
+{
+	emit details_clicked(m_service);
 }

@@ -16,8 +16,11 @@ class ServiceWindow : public QWidget, public Reloadable {
 
 public:
 	explicit ServiceWindow(QWidget *parent = nullptr);
-	void reload();
 	~ServiceWindow();
+
+	void on_AddService_accepted();
+	void on_details_clicked(model::Service &service);
+	void reload();
 
 signals:
 	void details_cliked(model::Service &service);
@@ -31,8 +34,6 @@ private:
 	AddService *addService;
 	LoginsWindow *loginsWindow;
 	FlowLayout *layout_services;
-	void on_AddService_accepted();
-	void on_details_clicked(model::Service &service);
 	Ui::ServiceWindow *ui;
 };
 

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <stack>
 #include "../model/Service.h"
+#include "../model/Login.h"
 
 namespace Ui {
 	class MainWindow;
@@ -16,6 +17,8 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 	void showServicesWindow();
+	void showLoginsWindow(model::Service &service);
+	void showTokensWindow(model::Login &login);
 
 private:
 	int current_index;
@@ -24,7 +27,6 @@ private:
 
 	void back();
 	void reload();
-	void showLoginsWindow(model::Service &service);
 };
 
 #endif // MAINWINDOW_H

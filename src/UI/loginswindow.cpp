@@ -30,6 +30,11 @@ void LoginsWindow::on_addLoginBtn_clicked()
 	addLogin->open();
 }
 
+void LoginsWindow::on_details_clicked(model::Login &login)
+{
+	emit details_clicked(login);
+}
+
 void LoginsWindow::reload() {
 	// get logins
 	impl::IdentifiantDaoImpl logins {};
@@ -48,7 +53,11 @@ void LoginsWindow::reload() {
 	for (int row = 0; row < all.size(); ++row) {
 		ShowPasswordWidget *widget = new ShowPasswordWidget(all[row]);
 		layout_logins->addWidget(widget);
+		//receive delete button click
 		connect(widget, &ShowPasswordWidget::delete_clicked,
 				this, &LoginsWindow::reload);
+		//receive details button click
+		connect(widget, &ShowPasswordWidget::details_clicked,
+				this, &LoginsWindow::on_details_clicked);
 	}
 }
