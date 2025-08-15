@@ -22,6 +22,8 @@ configure_file(${CMAKE_SOURCE_DIR}/data/passwords.sqlite
 # Images
 configure_file(${CMAKE_SOURCE_DIR}/data/custom_icons/back_arrow_icon.png
                ${CMAKE_SOURCE_DIR}/data/custom_icons/back_arrow_icon.png COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data/custom_icons/view_details_icon.png
+               ${CMAKE_SOURCE_DIR}/data/custom_icons/view_details_icon.png COPYONLY)
 
 target_link_libraries(${PROJECT_NAME}
     model

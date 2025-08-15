@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QMessageBox>
+#include <QDebug>
 
 ShowServiceWidget::ShowServiceWidget(model::Service &service, QWidget *parent) :
 	QWidget(parent),
@@ -12,6 +13,8 @@ ShowServiceWidget::ShowServiceWidget(model::Service &service, QWidget *parent) :
 	m_service(service)
 {
 	ui->setupUi(this);
+
+	ui->stackedWidget->setCurrentWidget(ui->View); // Set to View widget by default
 
 	ui->service_name->setText(QString::fromStdString(m_service.name));
 	ui->service_url->setText(QString::fromStdString(m_service.url));
@@ -24,11 +27,11 @@ ShowServiceWidget::ShowServiceWidget(model::Service &service, QWidget *parent) :
 
 ShowServiceWidget::~ShowServiceWidget() { delete ui; }
 
-void ShowServiceWidget::on_delete_btn_clicked()
+void ShowServiceWidget::show_view()
 {
-	impl::ServiceDaoImpl services {};
-	services.remove(m_service);
-	emit delete_clicked();
+	ui->service_name->setText(QString::fromStdString(m_service.name));
+	ui->service_url->setText(QString::fromStdString(m_service.url));
+	ui->stackedWidget->setCurrentWidget(ui->View);
 }
 
 void ShowServiceWidget::on_copy_url_btn_clicked()
@@ -54,7 +57,48 @@ void ShowServiceWidget::on_copy_url_btn_clicked()
 	timer->start(1000);
 }
 
+void ShowServiceWidget::on_update_btn_clicked()
+{
+	ui->new_name_tf->setText(QString::fromStdString(m_service.name));
+	ui->new_url_tf->setText(QString::fromStdString(m_service.url));
+	ui->stackedWidget->setCurrentWidget(ui->Edit); // Change to edit widget
+}
+
 void ShowServiceWidget::on_details_btn_clicked()
 {
 	emit details_clicked(m_service);
+}
+
+void ShowServiceWidget::on_delete_btn_clicked()
+{
+	impl::ServiceDaoImpl services {};
+	services.remove(m_service);
+	emit delete_clicked();
+}
+
+void ShowServiceWidget::on_edit_accepted()
+{
+	qDebug() << "clicked accept edit of " << QString::fromStdString(m_service.name);
+	if (ui->new_name_tf->text().isEmpty()){
+		QMessageBox::warning(this, "Error editing service", "The service could not have been edited because no name were provided");
+		return;
+	}
+	impl::ServiceDaoImpl services {};
+	model::Service new_service {0, ui->new_name_tf->text().toStdString(), ui->new_url_tf->text().toStdString()};
+	services.update(m_service.id, new_service);
+	if (new_service.id == -1) {
+		QMessageBox::warning(this, "Error editing service", QString::fromStdString(new_service.name));
+		return;
+	}
+
+	qDebug() << "edit confirmed";
+	m_service = new_service;
+	ui->stackedWidget->setCurrentWidget(ui->View);
+	emit update_confirm_clicked(m_service);
+}
+
+
+void ShowServiceWidget::on_edit_rejected()
+{
+	ui->stackedWidget->setCurrentWidget(ui->View);
 }
