@@ -52,7 +52,7 @@ void ServiceWindow::reload()
 		all = services.findByName(name);
 	}
 
-		   // clearing layout
+	// clearing layout
 	QLayoutItem *item;
 	while ((item = layout_services->takeAt(0)) != nullptr) {
 		if (QWidget *widget = item->widget()) {
@@ -61,7 +61,7 @@ void ServiceWindow::reload()
 		delete item;
 	}
 
-		   // add elements
+	// add elements
 	for (int row = 0; row < all.size(); ++row) {
 		ShowServiceWidget *widget = new ShowServiceWidget(all[row]);
 		layout_services->addWidget(widget);
@@ -71,5 +71,8 @@ void ServiceWindow::reload()
 		//received details button click
 		connect(widget, &ShowServiceWidget::details_clicked,
 				this, &ServiceWindow::on_details_clicked);
+		//received edit button confirm
+		connect(widget, &ShowServiceWidget::update_confirm_clicked,
+				this, &ServiceWindow::reload);
 	}
 }
