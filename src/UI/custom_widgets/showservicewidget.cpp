@@ -97,7 +97,6 @@ void ShowServiceWidget::on_edit_accepted()
 	emit update_confirm_clicked(m_service);
 }
 
-
 void ShowServiceWidget::on_edit_rejected()
 {
 	ui->stackedWidget->setCurrentWidget(ui->View);

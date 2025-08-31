@@ -59,5 +59,8 @@ void LoginsWindow::reload() {
 		//receive details button click
 		connect(widget, &ShowPasswordWidget::details_clicked,
 				this, &LoginsWindow::on_details_clicked);
+		//received edit button confirm
+		connect(widget, &ShowPasswordWidget::update_confirm_clicked,
+				this, &LoginsWindow::reload);
 	}
 }

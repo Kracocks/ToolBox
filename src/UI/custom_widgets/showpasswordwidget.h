@@ -15,16 +15,26 @@ public:
 	explicit ShowPasswordWidget(model::Login &login, QWidget *parent = nullptr);
 	~ShowPasswordWidget();
 
+	void show_view();
+	void show_edit();
+
 signals:
-	void delete_clicked();
+	void update_confirm_clicked(model::Login &login);
 	void details_clicked(model::Login &login);
+	void delete_clicked();
 
 private slots:
-	void on_delete_btn_clicked();
-
 	void on_copy_pwd_btn_clicked();
 
+	void on_update_btn_clicked();
+
 	void on_details_btn_clicked();
+
+	void on_delete_btn_clicked();
+
+	void on_edit_accepted();
+
+	void on_edit_rejected();
 
 private:
 	Ui::ShowPasswordWidget *ui;
