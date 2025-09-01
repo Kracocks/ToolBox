@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "../model/Login.h"
 #include "add_popups/addtoken.h"
+#include "custom_widgets/flowlayout.h"
 #include "reloadable.h"
 
 namespace Ui {
@@ -17,14 +18,20 @@ public:
 	explicit TokensWindow(model::Login &login, QWidget *parent = nullptr);
 	~TokensWindow();
 
+	void reload();
+
+signals:
+	void return_clicked();
+
 private slots:
+	void on_returnBtn_clicked();
+
 	void on_addTokenBtn_clicked();
 
 private:
 	model::Login m_login;
-	void reload();
-	void on_deleteTokenBtn_clicked();
 	AddToken *addToken;
+	FlowLayout *layout_tokens;
 	Ui::TokensWindow *ui;
 };
 

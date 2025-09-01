@@ -14,10 +14,7 @@ ShowPasswordWidget::ShowPasswordWidget(model::Login &login, QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	ui->stackedWidget->setCurrentWidget(ui->View);
-
-	ui->login_email->setText(QString::fromStdString(m_login.email));
-	ui->login_pwd->setText(QString::fromStdString(m_login.password));
+	show_view();
 }
 
 ShowPasswordWidget::~ShowPasswordWidget() { delete ui; }
@@ -27,6 +24,13 @@ void ShowPasswordWidget::show_view()
 	ui->login_email->setText(QString::fromStdString(m_login.email));
 	ui->login_pwd->setText(QString::fromStdString(m_login.password));
 	ui->stackedWidget->setCurrentWidget(ui->View);
+}
+
+void ShowPasswordWidget::show_edit()
+{
+	ui->new_email_tf->setText(QString::fromStdString(m_login.email));
+	ui->new_pwd_tf->setText(QString::fromStdString(m_login.password));
+	ui->stackedWidget->setCurrentWidget(ui->Edit);
 }
 
 void ShowPasswordWidget::on_copy_pwd_btn_clicked()
@@ -54,9 +58,7 @@ void ShowPasswordWidget::on_copy_pwd_btn_clicked()
 
 void ShowPasswordWidget::on_update_btn_clicked()
 {
-	ui->new_email_tf->setText(QString::fromStdString(m_login.email));
-	ui->new_pwd_tf->setText(QString::fromStdString(m_login.password));
-	ui->stackedWidget->setCurrentWidget(ui->Edit);
+	show_edit();
 }
 
 void ShowPasswordWidget::on_details_btn_clicked()

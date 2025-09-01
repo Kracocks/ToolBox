@@ -38,6 +38,7 @@ void MainWindow::showLoginsWindow(model::Service &service)
 void MainWindow::showTokensWindow(model::Login &login)
 {
 	TokensWindow *tokens_window = new TokensWindow(login, this);
+	connect(tokens_window, &TokensWindow::return_clicked, this, &MainWindow::back);
 	ui->stackedWidget->addWidget(tokens_window);
 	current_index = ui->stackedWidget->indexOf(tokens_window);
 	navigation_stack.push(tokens_window);

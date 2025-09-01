@@ -32,7 +32,7 @@
       <string notr="true">#stackedWidget {border: 2px solid black;}</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="View">
       <layout class="QVBoxLayout" name="verticalLayout">

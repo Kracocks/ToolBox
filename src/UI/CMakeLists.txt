@@ -11,16 +11,20 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 add_library(UI STATIC mainwindow.cpp mainwindow.h mainwindow.ui
     connection.h connection.cpp connection.ui
-    add_popups/addservice.h add_popups/addservice.cpp add_popups/addservice.ui
+
+    servicewindow.h servicewindow.cpp servicewindow.ui
     loginswindow.h loginswindow.cpp loginswindow.ui
-    add_popups/addlogin.h add_popups/addlogin.cpp add_popups/addlogin.ui
     tokenswindow.h tokenswindow.cpp tokenswindow.ui
+
+    add_popups/addservice.h add_popups/addservice.cpp add_popups/addservice.ui
+    add_popups/addlogin.h add_popups/addlogin.cpp add_popups/addlogin.ui
     add_popups/addtoken.h add_popups/addtoken.cpp add_popups/addtoken.ui
 
-    custom_widgets/showservicewidget.h custom_widgets/showservicewidget.cpp custom_widgets/showservicewidget.ui
     custom_widgets/flowlayout.h custom_widgets/flowlayout.cpp
+    custom_widgets/showservicewidget.h custom_widgets/showservicewidget.cpp custom_widgets/showservicewidget.ui
     custom_widgets/showpasswordwidget.h custom_widgets/showpasswordwidget.cpp custom_widgets/showpasswordwidget.ui
-    servicewindow.h servicewindow.cpp servicewindow.ui
+    custom_widgets/showtokenwidget.h custom_widgets/showtokenwidget.cpp custom_widgets/showtokenwidget.ui
+
     reloadable.h
 )
 

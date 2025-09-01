@@ -33,7 +33,7 @@ void LoginsWindow::on_addLoginBtn_clicked()
 void LoginsWindow::on_details_clicked(model::Login &login)
 {
 	emit details_clicked(login);
-}
+	}
 
 void LoginsWindow::reload() {
 	// get logins
