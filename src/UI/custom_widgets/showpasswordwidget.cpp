@@ -89,12 +89,12 @@ void ShowPasswordWidget::on_edit_accepted()
 
 	qDebug() << "edit confirmed";
 	m_login = new_login;
-	ui->stackedWidget->setCurrentWidget(ui->View);
+	show_view();
 	emit update_confirm_clicked(m_login);
 }
 
 void ShowPasswordWidget::on_edit_rejected()
 {
-	ui->stackedWidget->setCurrentWidget(ui->View);
+	show_view();
 }
 
