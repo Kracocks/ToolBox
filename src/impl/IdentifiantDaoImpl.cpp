@@ -182,7 +182,7 @@ namespace impl {
     	if (sqlite3_prepare_v2(bd, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
     		std::cerr << "Error preparing statement to update LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", -1};
+			return {-1, "Could not update login", "", -1};
     	}
     	sqlite3_bind_int(stmt, 1, getLastId());
     	sqlite3_bind_text(stmt, 2, newItem.getPassword().c_str(), -1, SQLITE_TRANSIENT);
@@ -190,11 +190,11 @@ namespace impl {
     	if (sqlite3_step(stmt) != SQLITE_DONE) {
     		std::cerr << "Error updating LOGIN\n" << sqlite3_errmsg(bd) << std::endl;
     		sqlite3_finalize(stmt);
-    		return {-1, "", "", -1};
+			return {-1, "Could not update login", "", -1};
     	}
 
     	sqlite3_finalize(stmt);
-    	return {-1, "", "", -1};
+		return newItem;
     }
 
     void IdentifiantDaoImpl::remove(const model::Identifiant<> &item) {
